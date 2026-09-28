@@ -1,5 +1,7 @@
 (*  Title:      SZS_Semantics.thy
     Author:     Johannes Schuster
+    Copyright:  2026 Geoff Sutcliffe and Johannes Schuster
+    License:    BSD-3-Clause
 
 The model theoretic content of the SZS success ontology.
 
@@ -52,9 +54,6 @@ primrec holds :: "success \<Rightarrow> 'i set \<Rightarrow> 'i set \<Rightarrow
 | "holds THM A C = (A \<subseteq> C)"
 | "holds FTH A C = (A \<inter> Fin \<subseteq> C)"
 | "holds STH A C = (A \<noteq> {} \<and> A \<subseteq> C)"
-  \<comment> \<open>Deviation 1.  The leading \<open>A \<noteq> {}\<close> is the clause the 2008 paper has and the
-      current page has dropped.  Without it EQV does not imply SAT, contrary to
-      the page's own prose and to Table 1 of the paper.\<close>
 | "holds EQV A C = (A \<noteq> {} \<and> A = C)"
 | "holds TAC A C = (A \<noteq> {} \<and> C = UNIV)"
 | "holds WEC A C = (A \<noteq> {} \<and> A \<subseteq> C \<and> C \<inter> - A \<noteq> {})"
@@ -63,9 +62,6 @@ primrec holds :: "success \<Rightarrow> 'i set \<Rightarrow> 'i set \<Rightarrow
 | "holds FTT A C = (Fin \<subseteq> A \<and> Fin \<subseteq> C)"
 | "holds WTC A C = (A \<noteq> {} \<and> A \<noteq> UNIV \<and> C = UNIV)"
 | "holds WTH A C = (A \<noteq> {} \<and> A \<subseteq> C \<and> C \<inter> - A \<noteq> {} \<and> C \<noteq> UNIV)"
-  \<comment> \<open>Deviation 2.  Conservative extension is a relation between interpretations
-      and does not factor through the model sets, so this is the page's own
-      parenthetical consequence.  See \<open>mex_strong\<close> below for the strong reading.\<close>
 | "holds MEX A C = (A \<noteq> {} \<and> C \<noteq> {} \<and> C \<subseteq> A)"
 | "holds NOC A C = (A \<inter> C \<noteq> {} \<and> A \<inter> - C \<noteq> {})"
 | "holds CAX A C = (A = {})"
@@ -87,9 +83,6 @@ primrec holds :: "success \<Rightarrow> 'i set \<Rightarrow> 'i set \<Rightarrow
 | "holds WCC A C = (A \<noteq> {} \<and> A \<subseteq> - C \<and> - C \<inter> - A \<noteq> {})"
 | "holds ECT A C = (A \<noteq> {} \<and> A \<noteq> UNIV \<and> A = - C)"
 | "holds UNS A C = (A = UNIV \<and> - C = UNIV)"
-  \<comment> \<open>Deviation 3.  This is the 2008 definition, which is the exact mirror of the
-      current FTT.  The present page states FUN existentially, which mirrors
-      nothing in the ontology, so one of the two has drifted.\<close>
 | "holds FUN A C = (Fin \<subseteq> A \<and> Fin \<subseteq> - C)"
 | "holds WUC A C = (A \<noteq> {} \<and> A \<noteq> UNIV \<and> - C = UNIV)"
 | "holds WCT A C = (A \<noteq> {} \<and> A \<subseteq> - C \<and> - C \<inter> - A \<noteq> {} \<and> - C \<noteq> UNIV)"
@@ -98,7 +91,7 @@ primrec holds :: "success \<Rightarrow> 'i set \<Rightarrow> 'i set \<Rightarrow
 | "holds UCA A C = (A = {} \<and> - C = UNIV)"
 | "holds TSU A C = True"
 | "holds TCP A C = True"
-| "holds TSC A C = True"
+| "holds TCC A C = True"
 | "holds VSU A C = True"
 | "holds VSG A C = True"
 | "holds VSB A C = True"
@@ -109,16 +102,13 @@ subsection \<open>The mirror theorem\<close>
 theorem holds_mirror: "holds (mirror s) A C = holds s A (- C)"
   by (cases s) auto
 
-corollary holds_mirror': "holds s A (- C) = holds (mirror s) A C"
-  by (simp add: holds_mirror)
-
 
 subsection \<open>Redundant conjuncts\<close>
 
 text \<open>
-  Three conditions are stated on the page with a conjunct that the rest of the
-  condition already implies.  These are kept in \<open>holds\<close> for fidelity to the
-  source and discharged here, so that later proofs work with the short form.
+  Three conditions carry a conjunct that the rest of the condition already
+  implies.  They are kept in \<open>holds\<close> as stated and discharged here, so that
+  later proofs work with the short form.
 \<close>
 
 lemma holds_SAT_iff: "holds SAT A C = (A \<inter> C \<noteq> {})"
@@ -161,61 +151,35 @@ lemma holds_SSU: "holds SSU A C"
   by simp
 
 
-subsection \<open>The strong reading of ModelExtending\<close>
-
-text \<open>
-  \<open>mex_strong ext A C\<close> is the page's literal condition: every model of C is a
-  conservative extension of some model of Ax.  It implies \<open>holds MEX\<close> exactly
-  when A is closed under the extension relation, which is the assumption the
-  page leaves in a parenthesis.  Stating it explicitly keeps the derived order
-  valid under both readings, since every edge proved from \<open>holds MEX\<close> is then
-  also available under the strong one.
-\<close>
-
-definition ext_closed :: "('i \<Rightarrow> 'i \<Rightarrow> bool) \<Rightarrow> 'i set \<Rightarrow> bool" where
-  "ext_closed ext A \<longleftrightarrow> (\<forall>x y. x \<in> A \<longrightarrow> ext y x \<longrightarrow> y \<in> A)"
-
-definition mex_strong :: "('i \<Rightarrow> 'i \<Rightarrow> bool) \<Rightarrow> 'i set \<Rightarrow> 'i set \<Rightarrow> bool" where
-  "mex_strong ext A C \<longleftrightarrow> A \<noteq> {} \<and> C \<noteq> {} \<and> (\<forall>y \<in> C. \<exists>x \<in> A. ext y x)"
-
-lemma mex_strong_imp_MEX:
-  assumes "ext_closed ext A" and "mex_strong ext A C"
-  shows "holds MEX A C"
-  using assms unfolding ext_closed_def mex_strong_def by auto
-
-definition cmx_strong :: "('i \<Rightarrow> 'i \<Rightarrow> bool) \<Rightarrow> 'i set \<Rightarrow> 'i set \<Rightarrow> bool" where
-  "cmx_strong ext A C \<longleftrightarrow> mex_strong ext A (- C)"
-
-lemma cmx_strong_imp_CMX:
-  assumes "ext_closed ext A" and "cmx_strong ext A C"
-  shows "holds CMX A C"
-  using assms mex_strong_imp_MEX [of ext A "- C"]
-  unfolding cmx_strong_def by simp
-
-
 section \<open>The four relationships\<close>
 
 text \<open>
-  The names follow the 2008 paper: \<open>isa\<close> is entailment, \<open>nota\<close> its negation,
-  \<open>nevera\<close> incompatibility, and \<open>xora\<close> exhaustive incompatibility.  Defining all
-  four here makes the comparison against Table 1 of that paper expressible in
-  SZS\_Hierarchy without further machinery.
+  \<open>isa\<close> is entailment, \<open>nota\<close> its negation, \<open>nevera\<close> incompatibility, \<open>xora\<close>
+  exhaustive incompatibility, and \<open>mighta\<close> joint satisfiability.  All five are
+  defined over \<open>holds\<close>, so each is decided by the shape enumeration of
+  SZS_Shapes.
 \<close>
 
 definition isa :: "success \<Rightarrow> success \<Rightarrow> bool" where
-  "isa s t \<longleftrightarrow> (\<forall>A C. holds s A C \<longrightarrow> holds t A C)"
+  "isa s t \<equiv> (\<forall>A C. holds s A C \<longrightarrow> holds t A C)"
 
 definition nota :: "success \<Rightarrow> success \<Rightarrow> bool" where
-  "nota s t \<longleftrightarrow> (\<exists>A C. holds s A C \<and> \<not> holds t A C)"
+  "nota s t \<equiv> (\<exists>A C. holds s A C \<and> \<not> holds t A C)"
 
 definition nevera :: "success \<Rightarrow> success \<Rightarrow> bool" where
-  "nevera s t \<longleftrightarrow> (\<forall>A C. holds s A C \<longrightarrow> \<not> holds t A C)"
+  "nevera s t \<equiv> (\<forall>A C. holds s A C \<longrightarrow> \<not> holds t A C)"
 
 definition xora :: "success \<Rightarrow> success \<Rightarrow> bool" where
-  "xora s t \<longleftrightarrow> (\<forall>A C. holds s A C \<noteq> holds t A C)"
+  "xora s t \<equiv> (\<forall>A C. holds s A C \<noteq> holds t A C)"
+
+definition mighta :: "success \<Rightarrow> success \<Rightarrow> bool" where
+  "mighta s t \<equiv> (\<exists>A C. holds s A C \<and> holds t A C)"
 
 lemma nota_iff: "nota s t \<longleftrightarrow> \<not> isa s t"
   unfolding nota_def isa_def by blast
+
+lemma mighta_iff: "mighta s t \<longleftrightarrow> \<not> nevera s t"
+  unfolding mighta_def nevera_def by blast
 
 lemma xora_imp_nevera: "xora s t \<Longrightarrow> nevera s t"
   unfolding xora_def nevera_def by blast
@@ -225,6 +189,9 @@ lemma nevera_sym: "nevera s t \<Longrightarrow> nevera t s"
 
 lemma xora_sym: "xora s t \<Longrightarrow> xora t s"
   unfolding xora_def by blast
+
+lemma mighta_sym: "mighta s t \<Longrightarrow> mighta t s"
+  unfolding mighta_def by blast
 
 lemma isa_refl [simp]: "isa s s"
   unfolding isa_def by blast
@@ -271,6 +238,9 @@ theorem nevera_mirror_iff: "nevera (mirror s) (mirror t) \<longleftrightarrow> n
 theorem xora_mirror_iff: "xora (mirror s) (mirror t) \<longleftrightarrow> xora s t"
   unfolding xora_def by (metis holds_mirror mirror_involution)
 
+theorem mighta_mirror_iff: "mighta (mirror s) (mirror t) \<longleftrightarrow> mighta s t"
+  by (simp add: mighta_iff nevera_mirror_iff)
+
 end
 
 
@@ -300,120 +270,66 @@ lemma Fin_neq_UNIV [simp]: "Fin \<noteq> UNIV"
 lemma UNIV_nonempty [simp]: "(UNIV :: 'i set) \<noteq> {}"
   using Fin_nonempty by auto
 
+end
 
-subsection \<open>The disputed edges\<close>
+
+section \<open>Signature extension\<close>
 
 text \<open>
-  The results below are the ones at issue in the correspondence with the TPTP
-  maintainer.  Each is stated as a single lemma so that it can be quoted
-  directly.  All of them concern values added to the ontology after the 2008
-  validation; the values validated then come through unchanged.
+  Ax and C need not share a signature: C may be stated over an extension of the
+  signature of Ax, and the page's ModelExtending is a condition relating the
+  two.  \<open>r\<close> is the reduct map from interpretations of the extended signature to
+  interpretations of the signature of Ax.  Two modelling assumptions are made:
+  \<open>r\<close> is surjective, so every Ax-structure has an expansion, and \<open>Fin_j\<close> is the
+  preimage of \<open>Fin\<close>, so an expansion has the domain of its reduct.  The second
+  fails for Henkin frames in which a new type contributes to the structure.
 \<close>
 
-paragraph \<open>ModelExtending belongs below Satisfiable.\<close>
+locale szs_ext = szs Fin for Fin :: "'i set" +
+  fixes r :: "'j \<Rightarrow> 'i"
+  assumes surj_r: "surj r"
+begin
 
-lemma isa_MEX_SAT: "isa MEX SAT"
-  unfolding isa_def by auto
+definition Fin_j :: "'j set" where
+  "Fin_j = r -` Fin"
 
-lemma isa_CMX_CSA: "isa CMX CSA"
-  by (simp add: Int_absorb1 isa_def)
+definition mex_sig :: "'i set \<Rightarrow> 'j set \<Rightarrow> bool" where
+  "mex_sig A C \<longleftrightarrow> A \<noteq> {} \<and> C \<noteq> {} \<and> r ` C \<subseteq> A"
 
-lemma not_isa_SAT_MEX: "\<not> isa SAT MEX"
-  unfolding isa_def
-  by (metis Fin_neq_UNIV Fin_nonempty Int_UNIV_right subset_UNIV subset_antisym szs_base.holds.simps(21)
-      szs_base.holds_SAT_iff)
+definition cmx_sig :: "'i set \<Rightarrow> 'j set \<Rightarrow> bool" where
+  "cmx_sig A C \<longleftrightarrow> mex_sig A (- C)"
 
-paragraph \<open>EquiTautologous does not preserve satisfiability.\<close>
+subsection \<open>Preimages\<close>
 
-lemma not_isa_ETA_SAP: "\<not> isa ETA SAP"
-proof -
-  have "holds ETA Fin {}" by simp
-  moreover have "\<not> holds SAP Fin {}" by simp
-  ultimately show ?thesis unfolding isa_def by blast
+lemma vimage_empty_iff [simp]: "r -` S = {} \<longleftrightarrow> S = {}"
+  using surj_r by (simp add: surj_vimage_empty)
+
+lemma image_vimage_r [simp]: "r ` (r -` S) = S"
+  using surj_r by (auto simp: surj_def)
+
+lemma image_subset_vimage: "r ` C \<subseteq> A \<longleftrightarrow> C \<subseteq> r -` A"
+  by auto
+
+lemma vimage_infinite:
+  assumes "infinite S" shows "infinite (r -` S)"
+  by (metis assms finite_imageI image_vimage_r)
+
+lemma szs_Fin_j: "szs Fin_j"
+proof unfold_locales
+  show "infinite Fin_j"
+    unfolding Fin_j_def by (rule vimage_infinite [OF Fin_infinite])
+  have "- Fin_j = r -` (- Fin)" by (auto simp: Fin_j_def)
+  then show "infinite (- Fin_j)"
+    using vimage_infinite [OF coFin_infinite] by simp
 qed
 
-lemma not_isa_ECA_CSP: "\<not> isa ECA CSP"
-  by (metis not_isa_ETA_SAP isa_mirror_iff mirror.simps(7) mirror.simps(4))
+subsection \<open>Factorisation\<close>
 
-lemma isa_ETA_TAP: "isa ETA TAP"
-  unfolding isa_def by auto
+lemma mex_sig_iff: "mex_sig A C \<longleftrightarrow> szs_base.holds Fin_j MEX (r -` A) C"
+  by (simp add: mex_sig_def szs_base.holds.simps image_subset_vimage)
 
-paragraph \<open>Theorem preserves tautologousness, mirroring CounterTheorem.\<close>
-
-lemma isa_THM_TAP: "isa THM TAP"
-  unfolding isa_def by auto
-
-lemma isa_CTH_CTP: "isa CTH CTP"
-  by (metis isa_THM_TAP isa_mirror mirror.simps(10) mirror.simps(5))
-
-paragraph \<open>The finite variants of the universal values sit above, not below.\<close>
-
-lemma isa_TAU_FTT: "isa TAU FTT"
-  unfolding isa_def by auto
-
-lemma not_isa_FTT_TAU: "\<not> isa FTT TAU"
-proof -
-  have "holds FTT Fin Fin" by simp
-  moreover have "\<not> holds TAU Fin Fin" by simp
-  ultimately show ?thesis unfolding isa_def by blast
-qed
-
-lemma isa_UNS_FUN: "isa UNS FUN"
-  by (metis isa_TAU_FTT isa_mirror mirror.simps(17) mirror.simps(18))
-
-lemma not_isa_FUN_UNS: "\<not> isa FUN UNS"
-  by (metis not_isa_FTT_TAU isa_mirror_iff mirror.simps(18) mirror.simps(17))
-
-lemma isa_FTT_FTH: "isa FTT FTH"
-  unfolding isa_def by auto
-
-lemma isa_THM_FTH: "isa THM FTH"
-  unfolding isa_def by auto
-
-paragraph \<open>The finite variants of the existential values sit below.\<close>
-
-lemma isa_FSA_SAT: "isa FSA SAT"
-  unfolding isa_def by auto
-
-lemma isa_FCS_CSA: "isa FCS CSA"
-  by (metis isa_FSA_SAT isa_mirror mirror.simps(9) mirror.simps(8))
-
-paragraph \<open>The two long cross links of the 2008 figure, absent from the current one.\<close>
-
-lemma isa_CSA_UNP: "isa CSA UNP"
-  unfolding isa_def by auto
-
-lemma isa_SAT_CUP: "isa SAT CUP"
-  by (metis isa_CSA_UNP isa_mirror mirror.simps(32) mirror.simps(3))
-
-paragraph \<open>Equivalent, with the clause the current page has dropped.\<close>
-
-lemma isa_EQV_SAT: "isa EQV SAT"
-  unfolding isa_def by auto
-
-lemma isa_EQV_THM: "isa EQV THM"
-  unfolding isa_def by auto
-
-lemma isa_EQV_STH: "isa EQV STH"
-  unfolding isa_def by auto
-
-paragraph \<open>Theorem does not imply Satisfiable; the paper's THM nota SAT.\<close>
-
-lemma not_isa_THM_SAT: "\<not> isa THM SAT"
-proof -
-  have "holds THM {} {}" by simp
-  moreover have "\<not> holds SAT {} {}" by simp
-  ultimately show ?thesis unfolding isa_def by blast
-qed
-
-lemma isa_CAX_THM: "isa CAX THM"
-  unfolding isa_def by auto
-
-lemma isa_CAX_CTH: "isa CAX CTH"
-  unfolding isa_def by auto
-
-lemma xora_THM_CSA: "xora THM CSA"
-  unfolding xora_def by auto
+lemma cmx_sig_iff: "cmx_sig A C \<longleftrightarrow> szs_base.holds Fin_j CMX (r -` A) C"
+  by (simp add: cmx_sig_def mex_sig_def szs_base.holds.simps image_subset_vimage)
 
 end
 
@@ -448,28 +364,5 @@ qed
 
 interpretation szs_nat: szs Evens
   by unfold_locales (rule infinite_Evens, rule infinite_coEvens)
-
-
-section \<open>Deviations from the published text\<close>
-
-text \<open>
-  \begin{description}
-  \item[EQV] \<open>holds EQV\<close> carries the leading \<open>A \<noteq> {}\<close>.  The 2008 paper states
-    the value with that clause; the current page omits it.  Without it EQV holds
-    vacuously when Ax and C are both unsatisfiable, so EQV would not imply SAT,
-    contradicting the page's own prose and the proved Table 1.  Recorded as
-    \<open>isa_EQV_SAT\<close>.
-  \item[MEX, CMX] Stated as the page's parenthetical consequence — every model
-    of C is a model of Ax — rather than as conservative extension, which does
-    not factor through model sets.  The strong reading is available as
-    \<open>mex_strong\<close>, and \<open>mex_strong_imp_MEX\<close> shows that every edge proved here
-    also holds under it, given that the models of Ax are closed under extension.
-  \item[FUN] Stated as in the 2008 paper, making it the exact mirror of the
-    current FTT.  The present page gives FUN an existential first clause, which
-    is the mirror of nothing in the ontology.  Under either reading \<open>isa UNS FUN\<close>
-    holds and \<open>isa FUN UNS\<close> fails, so the placement correction is independent of
-    this choice.
-  \end{description}
-\<close>
 
 end

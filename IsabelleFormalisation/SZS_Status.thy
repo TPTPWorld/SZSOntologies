@@ -1,5 +1,7 @@
 (*  Title:      SZS_Status.thy
     Author:     Johannes Schuster
+    Copyright:  2026 Geoff Sutcliffe and Johannes Schuster
+    License:    BSD-3-Clause
 
 The status values of the SZS success ontology, with their official OneWord
 names, their three letter mnemonics, the lower case form used inside a TPTP
@@ -41,7 +43,7 @@ datatype success =
   | CUP | CSP | CTP | ECS | ECA | CSA | FCS | CTH | FCT | SCT | CEQ | UNC | WCC
   | ECT | UNS | FUN | WUC | WCT | CMX | SCC | UCA
   \<comment> \<open>type checking and verification\<close>
-  | TSU | TCP | TSC | VSU | VSG | VSB
+  | TSU | TCP | TCC | VSU | VSG | VSB
 
 definition all_success :: "success list" where
   "all_success =
@@ -51,7 +53,7 @@ definition all_success :: "success list" where
      CAX, SCA, TCA, WCA,
      CUP, CSP, CTP, ECS, ECA, CSA, FCS, CTH, FCT, SCT, CEQ, UNC, WCC,
      ECT, UNS, FUN, WUC, WCT, CMX, SCC, UCA,
-     TSU, TCP, TSC, VSU, VSG, VSB]"
+     TSU, TCP, TCC, VSU, VSG, VSB]"
 
 lemma all_success_UNIV [simp]: "set all_success = UNIV"
 proof -
@@ -128,7 +130,7 @@ primrec one_word :: "success \<Rightarrow> string" where
 | "one_word UCA = ''UnsatisfiableConclusionContradictoryAxioms''"
 | "one_word TSU = ''TypeCheckSuccess''"
 | "one_word TCP = ''TypeCheckPartial''"
-| "one_word TSC = ''TypeCheckedComplete''"
+| "one_word TCC = ''TypeCheckedComplete''"
 | "one_word VSU = ''VerifySuccess''"
 | "one_word VSG = ''VerifiedGood''"
 | "one_word VSB = ''VerifiedBad''"
@@ -193,7 +195,7 @@ primrec mnemonic :: "success \<Rightarrow> string" where
 | "mnemonic UCA = ''UCA''"
 | "mnemonic TSU = ''TSU''"
 | "mnemonic TCP = ''TCP''"
-| "mnemonic TSC = ''TSC''"
+| "mnemonic TCC = ''TCC''"
 | "mnemonic VSU = ''VSU''"
 | "mnemonic VSG = ''VSG''"
 | "mnemonic VSB = ''VSB''"
@@ -332,7 +334,7 @@ primrec mirror :: "success \<Rightarrow> success" where
 | "mirror UCA = TCA"
 | "mirror TSU = TSU"
 | "mirror TCP = TCP"
-| "mirror TSC = TSC"
+| "mirror TCC = TCC"
 | "mirror VSU = VSU"
 | "mirror VSG = VSG"
 | "mirror VSB = VSB"
@@ -350,7 +352,7 @@ lemma inj_mirror: "inj mirror"
   using bij_mirror by (rule bij_is_inj)
 
 definition mirror_fixed_points :: "success set" where
-  "mirror_fixed_points = {SUC, SSU, NOC, CAX, WCA, TSU, TCP, TSC, VSU, VSG, VSB}"
+  "mirror_fixed_points = {SUC, SSU, NOC, CAX, WCA, TSU, TCP, TCC, VSU, VSG, VSB}"
 
 lemma mirror_fixed_iff: "mirror s = s \<longleftrightarrow> s \<in> mirror_fixed_points"
   by (cases s) (simp_all add: mirror_fixed_points_def)
@@ -372,7 +374,7 @@ text \<open>
 \<close>
 
 definition model_theoretic :: "success \<Rightarrow> bool" where
-  "model_theoretic s \<longleftrightarrow> s \<notin> {SUC, SSU, TSU, TCP, TSC, VSU, VSG, VSB}"
+  "model_theoretic s \<longleftrightarrow> s \<notin> {SUC, SSU, TSU, TCP, TCC, VSU, VSG, VSB}"
 
 definition model_theoretic_values :: "success list" where
   "model_theoretic_values = filter model_theoretic all_success"

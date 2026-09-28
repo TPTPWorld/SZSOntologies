@@ -1,5 +1,7 @@
 (*  Title:      SZS_Shapes.thy
     Author:     Johannes Schuster
+    Copyright:  2026 Geoff Sutcliffe and Johannes Schuster
+    License:    BSD-3-Clause
 
 An abstraction of \<langle>Ax, C\<rangle> down to a finite space, a decision procedure for
 entailment between SZS success values, and its completeness.
@@ -13,10 +15,6 @@ and, for the finite variants, through whether each region contains a finite
 interpretation.  Recording for each region whether it is empty, nonempty with
 no finite member, or has a finite member gives a space of 81 shapes, of which
 65 are realizable.  Entailment between status values is then a finite check.
-
-This is the formal counterpart of Figure 2 of the 2008 paper, which draws these
-regions and which its author describes as the informal first step towards
-validating the ontology.
 
 Everything except \<open>shape_of\<close> is independent of the interpretation type and of
 the finiteness parameter, so the check \<open>isa_chk\<close> lives at theory level and is
@@ -181,7 +179,7 @@ primrec holds_shape :: "success \<Rightarrow> shape \<Rightarrow> bool" where
 | "holds_shape UCA \<sigma> = (sA_empty \<sigma> \<and> sC_empty \<sigma>)"
 | "holds_shape TSU \<sigma> = True"
 | "holds_shape TCP \<sigma> = True"
-| "holds_shape TSC \<sigma> = True"
+| "holds_shape TCC \<sigma> = True"
 | "holds_shape VSU \<sigma> = True"
 | "holds_shape VSG \<sigma> = True"
 | "holds_shape VSB \<sigma> = True"
@@ -204,28 +202,31 @@ lemma realizable_iff: "realizable \<sigma> \<longleftrightarrow> (\<exists>r. \<
   by (auto simp: realizable_def list_ex_iff)
 
 definition isa_chk :: "success \<Rightarrow> success \<Rightarrow> bool" where
-  "isa_chk s t \<longleftrightarrow>
+  "isa_chk s t \<equiv>
      list_all (\<lambda>(a, b, c, d).
                  let \<sigma> = mk_shape a b c d
                  in realizable \<sigma> \<longrightarrow> holds_shape s \<sigma> \<longrightarrow> holds_shape t \<sigma>)
               quads"
 
 definition nevera_chk :: "success \<Rightarrow> success \<Rightarrow> bool" where
-  "nevera_chk s t \<longleftrightarrow>
+  "nevera_chk s t \<equiv>
      list_all (\<lambda>(a, b, c, d).
                  let \<sigma> = mk_shape a b c d
                  in realizable \<sigma> \<longrightarrow> holds_shape s \<sigma> \<longrightarrow> \<not> holds_shape t \<sigma>)
               quads"
 
 definition xora_chk :: "success \<Rightarrow> success \<Rightarrow> bool" where
-  "xora_chk s t \<longleftrightarrow>
+  "xora_chk s t \<equiv>
      list_all (\<lambda>(a, b, c, d).
                  let \<sigma> = mk_shape a b c d
                  in realizable \<sigma> \<longrightarrow> holds_shape s \<sigma> \<noteq> holds_shape t \<sigma>)
               quads"
 
 definition nota_chk :: "success \<Rightarrow> success \<Rightarrow> bool" where
-  "nota_chk s t \<longleftrightarrow> \<not> isa_chk s t"
+  "nota_chk s t \<equiv> \<not> isa_chk s t"
+
+definition mighta_chk :: "success \<Rightarrow> success \<Rightarrow> bool" where
+  "mighta_chk s t \<equiv> \<not> nevera_chk s t"
 
 lemma isa_chk_iff:
   "isa_chk s t \<longleftrightarrow> (\<forall>\<sigma>. realizable \<sigma> \<longrightarrow> holds_shape s \<sigma> \<longrightarrow> holds_shape t \<sigma>)"
@@ -372,9 +373,7 @@ text \<open>
   construction chooses one witness per nonempty region — a finite one for an
   \<open>FFin\<close> region and an infinite one for an \<open>FInf\<close> region — sends everything
   else to a designated \<open>FFin\<close> region, and reads A and C off the resulting
-  partition.  This is the step that the 2008 axiomatization had to postulate:
-  its \<open>sat_non_taut_pair\<close> axiom asserts the existence of a witness pair, which
-  its author declined to supply explicitly.
+  partition.
 \<close>
 
 lemma realizable_witness:
@@ -574,61 +573,142 @@ qed
 theorem nota_iff_chk: "nota s t \<longleftrightarrow> nota_chk s t"
   by (simp add: nota_iff nota_chk_def isa_iff_chk)
 
+theorem mighta_iff_chk: "mighta s t \<longleftrightarrow> mighta_chk s t"
+  by (simp add: mighta_iff mighta_chk_def nevera_iff_chk)
+
 end
 
 
 section \<open>Sanity checks\<close>
 
 text \<open>
-  The size of the search space, and the disputed edges of the published
-  diagram, now decided by computation rather than by argument.  All of these
-  are statements about \<open>isa_chk\<close>, which is independent of the interpretation
-  type; \<open>isa_iff_chk\<close> transfers each of them to \<open>isa\<close> in any instance of \<open>szs\<close>.
+  The size of the search space, and the mirror symmetry of the decision
+  procedure.  Both are statements about \<open>isa_chk\<close>, which is independent of the
+  interpretation type; \<open>isa_iff_chk\<close> transfers them to \<open>isa\<close> in any instance of
+  \<open>szs\<close>, so the individual edges are recorded once, as the \<open>isa_\<close> lemmas of
+  SZS_Semantics, rather than twice.
 \<close>
 
 lemma card_realizable_shapes:
   "length (filter (\<lambda>(a, b, c, d). realizable (mk_shape a b c d)) quads) = 65"
   by eval
 
-lemma chk_MEX_SAT:      "isa_chk MEX SAT"       by eval
-lemma chk_not_SAT_MEX:  "\<not> isa_chk SAT MEX"     by eval
-lemma chk_CMX_CSA:      "isa_chk CMX CSA"       by eval
-
-lemma chk_not_ETA_SAP:  "\<not> isa_chk ETA SAP"     by eval
-lemma chk_not_ECA_CSP:  "\<not> isa_chk ECA CSP"     by eval
-lemma chk_ETA_TAP:      "isa_chk ETA TAP"       by eval
-
-lemma chk_THM_TAP:      "isa_chk THM TAP"       by eval
-lemma chk_CTH_CTP:      "isa_chk CTH CTP"       by eval
-
-lemma chk_TAU_FTT:      "isa_chk TAU FTT"       by eval
-lemma chk_not_FTT_TAU:  "\<not> isa_chk FTT TAU"     by eval
-lemma chk_UNS_FUN:      "isa_chk UNS FUN"       by eval
-lemma chk_not_FUN_UNS:  "\<not> isa_chk FUN UNS"     by eval
-lemma chk_FTT_FTH:      "isa_chk FTT FTH"       by eval
-lemma chk_FUN_FCT:      "isa_chk FUN FCT"       by eval
-
-lemma chk_FSA_SAT:      "isa_chk FSA SAT"       by eval
-lemma chk_FCS_CSA:      "isa_chk FCS CSA"       by eval
-
-lemma chk_CSA_UNP:      "isa_chk CSA UNP"       by eval
-lemma chk_SAT_CUP:      "isa_chk SAT CUP"       by eval
-
-lemma chk_EQV_SAT:      "isa_chk EQV SAT"       by eval
-lemma chk_EQV_THM:      "isa_chk EQV THM"       by eval
-lemma chk_EQV_STH:      "isa_chk EQV STH"       by eval
-lemma chk_not_THM_SAT:  "\<not> isa_chk THM SAT"     by eval
-lemma chk_xora_THM_CSA: "xora_chk THM CSA"      by eval
-
 text \<open>
   The mirror symmetry of the check.  This is a computation over 53 \<times> 53 pairs,
-  and it is the statement that would have exposed both asymmetries of the
-  published diagram in one step.
+  and it is what exposes an asymmetric reading of a mirror pair in one step.
 \<close>
 
 lemma isa_chk_mirror:
   "list_all (\<lambda>s. list_all (\<lambda>t. isa_chk (mirror s) (mirror t) = isa_chk s t) all_success)
             all_success"
   by eval
+
+
+section \<open>Invariance under signature extension\<close>
+
+text \<open>
+  \<open>shape_of_vimage\<close> is the statement the fixed signature reading needs: the
+  shape of \<open>\<langle>Ax, C\<rangle>\<close> is the same read over the signature of Ax and over any
+  extension of it.  With \<open>holds_shape_of\<close> it gives \<open>holds_vimage\<close>, the
+  invariance of all fifty-three conditions, and with \<open>mex_sig_iff\<close> it makes the
+  MEX entry of \<open>holds\<close> the page's two-signature condition rather than a
+  stipulation.
+\<close>
+
+context szs_ext
+begin
+
+lemma reg_vimage: "reg q (r -` A) (r -` C) = r -` reg q A C"
+  by (cases q) auto
+
+lemma shape_of_vimage:
+  "szs_base.shape_of Fin_j (r -` A) (r -` C) = shape_of A C"
+proof (rule ext)
+  fix q :: region
+  have "(reg q (r -` A) (r -` C) = {}) = (reg q A C = {})"
+    by (simp add: reg_vimage)
+  moreover have "(reg q (r -` A) (r -` C) \<inter> Fin_j = {}) = (reg q A C \<inter> Fin = {})"
+    by (simp add: reg_vimage Fin_j_def flip: vimage_Int)
+  ultimately show "szs_base.shape_of Fin_j (r -` A) (r -` C) q = shape_of A C q"
+    by (simp add: szs_base.shape_of_def shape_of_def)
+qed
+
+theorem holds_vimage: "szs_base.holds Fin_j s (r -` A) (r -` C) = holds s A C"
+  by (simp add: szs_base.holds_shape_of shape_of_vimage holds_shape_of)
+
+definition isa_ext :: "success \<Rightarrow> success \<Rightarrow> bool" where
+  "isa_ext s t \<equiv>
+     (\<forall>A C. szs_base.holds Fin_j s (r -` A) C \<longrightarrow> szs_base.holds Fin_j t (r -` A) C)"
+
+theorem isa_ext_iff_chk: "isa_ext s t \<longleftrightarrow> isa_chk s t"
+proof
+  assume ext: "isa_ext s t"
+  show "isa_chk s t"
+    unfolding isa_chk_iff
+  proof (intro allI impI)
+    fix \<sigma> assume "realizable \<sigma>" and "holds_shape s \<sigma>"
+    then obtain A C where AC: "shape_of A C = \<sigma>"
+      using realizable_witness by blast
+    have lift: "szs_base.shape_of Fin_j (r -` A) (r -` C) = \<sigma>"
+      by (simp add: shape_of_vimage AC)
+    from \<open>holds_shape s \<sigma>\<close> lift
+    have "szs_base.holds Fin_j s (r -` A) (r -` C)"
+      by (simp add: szs_base.holds_shape_of)
+    with ext have "szs_base.holds Fin_j t (r -` A) (r -` C)"
+      unfolding isa_ext_def by blast
+    with lift show "holds_shape t \<sigma>"
+      by (simp add: szs_base.holds_shape_of)
+  qed
+next
+  assume chk: "isa_chk s t"
+  show "isa_ext s t"
+    unfolding isa_ext_def
+  proof (intro allI impI)
+    fix A :: "'i set" and C :: "'j set"
+    assume "szs_base.holds Fin_j s (r -` A) C"
+    then have "holds_shape s (szs_base.shape_of Fin_j (r -` A) C)"
+      by (simp add: szs_base.holds_shape_of)
+    moreover have "realizable (szs_base.shape_of Fin_j (r -` A) C)"
+      by (rule szs.realizable_shape_of [OF szs_Fin_j])
+    ultimately have "holds_shape t (szs_base.shape_of Fin_j (r -` A) C)"
+      using chk unfolding isa_chk_iff by blast
+    then show "szs_base.holds Fin_j t (r -` A) C"
+      by (simp add: szs_base.holds_shape_of)
+  qed
+qed
+
+theorem mex_sig_entails_iff:
+  "(\<forall>A C. mex_sig A C \<longrightarrow> szs_base.holds Fin_j t (r -` A) C) \<longleftrightarrow> isa_chk MEX t"
+proof -
+  have "(\<forall>A C. mex_sig A C \<longrightarrow> szs_base.holds Fin_j t (r -` A) C) = isa_ext MEX t"
+    by (simp add: isa_ext_def mex_sig_iff)
+  then show ?thesis by (simp add: isa_ext_iff_chk)
+qed
+
+theorem entails_mex_sig_iff:
+  "(\<forall>A C. szs_base.holds Fin_j s (r -` A) C \<longrightarrow> mex_sig A C) \<longleftrightarrow> isa_chk s MEX"
+proof -
+  have "(\<forall>A C. szs_base.holds Fin_j s (r -` A) C \<longrightarrow> mex_sig A C) = isa_ext s MEX"
+    by (simp add: isa_ext_def mex_sig_iff)
+  then show ?thesis by (simp add: isa_ext_iff_chk)
+qed
+
+theorem cmx_sig_entails_iff:
+  "(\<forall>A C. cmx_sig A C \<longrightarrow> szs_base.holds Fin_j t (r -` A) C) \<longleftrightarrow> isa_chk CMX t"
+proof -
+  have "(\<forall>A C. cmx_sig A C \<longrightarrow> szs_base.holds Fin_j t (r -` A) C) = isa_ext CMX t"
+    by (simp add: isa_ext_def cmx_sig_iff)
+  then show ?thesis by (simp add: isa_ext_iff_chk)
+qed
+
+theorem entails_cmx_sig_iff:
+  "(\<forall>A C. szs_base.holds Fin_j s (r -` A) C \<longrightarrow> cmx_sig A C) \<longleftrightarrow> isa_chk s CMX"
+proof -
+  have "(\<forall>A C. szs_base.holds Fin_j s (r -` A) C \<longrightarrow> cmx_sig A C) = isa_ext s CMX"
+    by (simp add: isa_ext_def cmx_sig_iff)
+  then show ?thesis by (simp add: isa_ext_iff_chk)
+qed
+
+end
 
 end

@@ -1,0 +1,23 @@
+This repository is distributed under two licenses.
+
+1. Isabelle theories
+
+   IsabelleFormalisation/*.thy
+   (and any ROOT and document/ files accompanying them)
+
+   Licensed under the BSD 3-Clause License (SPDX: BSD-3-Clause).
+   Full text: LICENSES/BSD-3-Clause.txt
+
+   These theories are intended for submission to the Archive of Formal
+   Proofs, whose default licence is BSD.
+
+2. Everything else
+
+   Licensed under the Creative Commons Attribution 4.0 International
+   License (SPDX: CC-BY-4.0).
+   Full text: LICENSES/CC-BY-4.0.txt
+   https://creativecommons.org/licenses/by/4.0/
+
+   Exception: 2008-LPAR-KE/easychair.cls is the EasyChair document class
+   by Serguei A. Mokhov and is distributed under EasyChair's own terms,
+   not under CC-BY-4.0.
