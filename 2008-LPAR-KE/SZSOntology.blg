@@ -1,0 +1,48 @@
+This is BibTeX, Version 0.99d (TeX Live 2023)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: SZSOntology.aux
+The style file: plain.bst
+Database file #1: Bibliography.bib
+Warning--can't use both volume and number fields in TPS07
+You've used 25 entries,
+            2118 wiz_defined-function locations,
+            683 strings with 8630 characters,
+and the built_in function-call counts, 10075 in all, are:
+= -- 961
+> -- 491
+< -- 23
++ -- 177
+- -- 152
+* -- 722
+:= -- 1614
+add.period$ -- 82
+call.type$ -- 25
+change.case$ -- 135
+chr.to.int$ -- 0
+cite$ -- 26
+duplicate$ -- 414
+empty$ -- 796
+format.name$ -- 152
+if$ -- 2222
+int.to.chr$ -- 0
+int.to.str$ -- 25
+missing$ -- 22
+newline$ -- 127
+num.names$ -- 81
+pop$ -- 139
+preamble$ -- 1
+purify$ -- 111
+quote$ -- 0
+skip$ -- 318
+stack$ -- 0
+substring$ -- 571
+swap$ -- 148
+text.length$ -- 23
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 99
+warning$ -- 1
+while$ -- 95
+width$ -- 27
+write$ -- 295
+(There was 1 warning)

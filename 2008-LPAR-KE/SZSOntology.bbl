@@ -1,0 +1,169 @@
+\begin{thebibliography}{10}
+
+\bibitem{AKR00}
+A.~Armando, M.~Kohlhase, and S.~Ranise.
+\newblock {Communication Protocols for Mathematical Services based on KQML and
+  OMRS}.
+\newblock In M.~Kerber and M.~Kohlhase, editors, {\em {Proceedings of the
+  Calculemus Symposium 2000}}, 2000.
+
+\bibitem{BFT04}
+P.~Baumgartner, A.~Fuchs, and C.~Tinelli.
+\newblock {Darwin - A Theorem Prover for the Model Evolution Calculus}.
+\newblock In G.~Sutcliffe, S.~Schulz, and T.~Tammet, editors, {\em {Proceedings
+  of the Workshop on Empirically Successful First Order Reasoning}}, 2004.
+
+\bibitem{BRS08}
+C.~Benzm{\"u}ller, F.~Rabe, and G.~Sutcliffe.
+\newblock {THF0 - The Core TPTP Language for Classical Higher-Order Logic}.
+\newblock In P.~Baumgartner, A.~Armando, and G.~Dowek, editors, {\em
+  {Proceedings of the 4th International Joint Conference on Automated
+  Reasoning}}, number 5195 in Lecture Notes in Artificial Intelligence, pages
+  491--506, Berlin, Germany, 2008. Springer.
+
+\bibitem{CS03}
+K.~Claessen and N.~S{\"o}rensson.
+\newblock {New Techniques that Improve MACE-style Finite Model Finding}.
+\newblock In P.~Baumgartner and C.~Fermueller, editors, {\em {Proceedings of
+  the CADE-19 Workshop: Model Computation - Principles, Algorithms,
+  Applications}}, 2003.
+
+\bibitem{DFS04-IJCAR}
+E.~Denney, B.~Fischer, and J.~Schumann.
+\newblock {Using Automated Theorem Provers to Certify Auto-generated Aerospace
+  Software}.
+\newblock In M.~Rusinowitch and D.~Basin, editors, {\em {Proceedings of the 2nd
+  International Joint Conference on Automated Reasoning}}, number 3097 in
+  Lecture Notes in Artificial Intelligence, pages 198--212, 2004.
+
+\bibitem{Hur03}
+J.~Hurd.
+\newblock {First-Order Proof Tactics in Higher-Order Logic Theorem Provers}.
+\newblock In M.~Archer, B.~Di~Vito, and C.~Munoz, editors, {\em {Proceedings of
+  the 1st International Workshop on Design and Application of
+  Strategies/Tactics in Higher Order Logics}}, number NASA/CP-2003-212448 in
+  NASA Technical Reports, pages 56--68, 2003.
+
+\bibitem{IB96}
+A.~Ireland and A.~Bundy.
+\newblock {Productive use of Failure in Inductive Proof}.
+\newblock {\em Journal of Automated Reasoning}, 16(1-2):79--111, 1996.
+
+\bibitem{Kor08}
+K.~Korovin.
+\newblock {iProver - An Instantiation-based Theorem Prover for First-order
+  Logic (System Description)}.
+\newblock In P.~Baumgartner, A.~Armando, and G.~Dowek, editors, {\em
+  {Proceedings of the 4th International Joint Conference on Automated
+  Reasoning}}, number 5195 in Lecture Notes in Artificial Intelligence, pages
+  292--298, 2008.
+
+\bibitem{MT+05}
+P.~Massar, M.~Travers, J.~Elhai, and J.~Shrager.
+\newblock {BioLingua: A Programmable Knowledge Environment for Biologists}.
+\newblock {\em Bioinformatics}, 21(2):199--207, 2005.
+
+\bibitem{MBI94}
+R.~Monroy, A.~Bundy, and A.~Ireland.
+\newblock {Proof Plans for the Correction of False Conjectures}.
+\newblock In F.~Pfenning, editor, {\em {Proceedings of the 5th International
+  Conference on Logic for Programming, Artificial Intelligence, and
+  Reasoning}}, number 822 in Lecture Notes in Artificial Intelligence, pages
+  178--189, Berlin, Germany, 1994. Springer.
+
+\bibitem{RV02-AICOMM}
+A.~Riazanov and A.~Voronkov.
+\newblock {The Design and Implementation of Vampire}.
+\newblock {\em AI Communications}, 15(2-3):91--110, 2002.
+
+\bibitem{Sch02-AICOMM}
+S.~Schulz.
+\newblock {E: A Brainiac Theorem Prover}.
+\newblock {\em AI Communications}, 15(2-3):111--126, 2002.
+
+\bibitem{SW+07}
+J.~Shrager, R.~Waldinger, M.~Stickel, and P.~Massar.
+\newblock {Deductive Biocomputing}.
+\newblock {\em PLoS ONE}, 2(4), 2007.
+
+\bibitem{Sti-SNARK-URL}
+M.E. Stickel.
+\newblock {SNARK - SRI's New Automated Reasoning Kit}.
+\newblock {\url{http://www.ai.sri.com/~stickel/snark.html}}, 2012.
+
+\bibitem{Sut-TSTP-URL}
+G.~Sutcliffe.
+\newblock {The TSTP Solution Library}.
+\newblock {http://www.TPTP.org/TSTP}.
+
+\bibitem{Sut06}
+G.~Sutcliffe.
+\newblock {Semantic Derivation Verification: Techniques and Implementation}.
+\newblock {\em International Journal on Artificial Intelligence Tools},
+  15(6):1053--1070, 2006.
+
+\bibitem{SP07}
+G.~Sutcliffe and Y.~Puzis.
+\newblock {SRASS - a Semantic Relevance Axiom Selection System}.
+\newblock In F.~Pfenning, editor, {\em {Proceedings of the 21st International
+  Conference on Automated Deduction}}, number 4603 in Lecture Notes in
+  Artificial Intelligence, pages 295--310, Berlin, Germany, 2007. Springer.
+
+\bibitem{SS+06}
+G.~Sutcliffe, S.~Schulz, K.~Claessen, and A.~Van~Gelder.
+\newblock {Using the TPTP Language for Writing Derivations and Finite
+  Interpretations}.
+\newblock In U.~Furbach and N.~Shankar, editors, {\em {Proceedings of the 3rd
+  International Joint Conference on Automated Reasoning}}, number 4130 in
+  Lecture Notes in Artificial Intelligence, pages 67--81, Berlin, Germany,
+  2006. Springer.
+
+\bibitem{SS99-FLAIRS}
+G.~Sutcliffe and D.~Seyfang.
+\newblock {Smart Selective Competition Parallelism ATP}.
+\newblock In A.~Kumar and I.~Russell, editors, {\em {Proceedings of the 12th
+  International FLAIRS Conference}}, pages 341--345, Palo Alto, USA, 1999. AAAI
+  Press.
+
+\bibitem{SS98-JAR}
+G.~Sutcliffe and C.B. Suttner.
+\newblock {The TPTP Problem Library: CNF Release v1.2.1}.
+\newblock {\em Journal of Automated Reasoning}, 21(2):177--203, 1998.
+
+\bibitem{SUS07}
+G.~Sutcliffe, J.~Urban, and S.~Schulz, editors.
+\newblock {\em {Proceedings of the CADE-21 Workshop on Empirically Successful
+  Automated Reasoning in Large Theories}}, number 257 in CEUR Workshop
+  Proceedings, 2007.
+
+\bibitem{SYT09}
+G.~Sutcliffe, A.~Yerikalapudi, and S.~Trac.
+\newblock {Multiple Answer Extraction for Question Answering with Automated
+  Theorem Proving Systems}.
+\newblock In H.~Guesgen and C.~Lane, editors, {\em {Proceedings of the 22nd
+  International FLAIRS Conference}}, pages 105--110, Palo Alto, USA, 2009. AAAI
+  Press.
+
+\bibitem{TPS07}
+S.~Trac, Y.~Puzis, and G.~Sutcliffe.
+\newblock {An Interactive Derivation Viewer}.
+\newblock In S.~Autexier and C.~Benzm{\"u}ller, editors, {\em {Proceedings of
+  the 7th Workshop on User Interfaces for Theorem Provers}}, volume 174 of {\em
+  {Electronic Notes in Theoretical Computer Science}}, pages 109--123, 2007.
+
+\bibitem{WS+07}
+C.~Weidenbach, R.~Schmidt, T.~Hillenbrand, R.~Rusev, and D.~Topic.
+\newblock {SPASS Version 3.0}.
+\newblock In F.~Pfenning, editor, {\em {Proceedings of the 21st International
+  Conference on Automated Deduction}}, number 4603 in Lecture Notes in
+  Artificial Intelligence, pages 514--520, Berlin, Germany, 2007. Springer.
+
+\bibitem{ZK02}
+J.~Zimmer and M.~Kohlhase.
+\newblock {System Description: The MathWeb Software Bus for Distributed
+  Mathematical Reasoning}.
+\newblock In A.~Voronkov, editor, {\em {Proceedings of the 18th International
+  Conference on Automated Deduction}}, number 2392 in Lecture Notes in
+  Artificial Intelligence, pages 139--143, Berlin, Germany, 2002. Springer.
+
+\end{thebibliography}
