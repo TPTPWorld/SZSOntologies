@@ -28,6 +28,13 @@ jobs:
       # USER_HOME is world-writable, so root works.
       options: --user root
     steps:
+      - name: Install git for checkout and dirty-worktree check
+        run: |
+          if ! command -v git >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends git
+          fi
+
       - uses: actions/checkout@v4
 
       - name: Build session SZS
