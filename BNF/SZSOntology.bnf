@@ -1,0 +1,192 @@
+------------------------------------------------------------------------------
+%----The SZS ontologies, generated from SZS_BNF.thy
+
+%----A status value, as used in a % SZS status line
+<SZS>                    ::= <Success> | <NoSuccess> | <Data>
+
+%----The success ontology
+<Success>                ::= Success | <SemanticSuccess> | <TypeCheckSuccess> |
+                             <VerifySuccess>
+<SemanticSuccess>        ::= SemanticSuccess | <UnsatisfiabilityPreserving> |
+                             <SatisfiabilityPreserving> |
+                             <TautologyPreserving> | <FiniteTheorem> |
+                             <CounterUnsatisfiabilityPreserving> |
+                             <CounterSatisfiabilityPreserving> |
+                             <CounterTautologyPreserving> |
+                             <FiniteCounterTheorem>
+<UnsatisfiabilityPreserving> ::= UnsatisfiabilityPreserving |
+                             <EquiSatisfiable> | <CounterSatisfiable>
+<SatisfiabilityPreserving> ::= SatisfiabilityPreserving | <EquiSatisfiable> |
+                             <Theorem>
+<TautologyPreserving>    ::= TautologyPreserving | <EquiTautologous> |
+                             <Theorem>
+<EquiSatisfiable>        ::= EquiSatisfiable | <Satisfiable> |
+                             <EquivalentCounterTheorem> |
+                             <WeakerCounterTheorem> |
+                             <UnsatisfiableConclusionContradictoryAxioms>
+<EquiTautologous>        ::= EquiTautologous | <Equivalent> | <WeakerTheorem> |
+                             <WeakerCounterConclusion> |
+                             <EquivalentCounterTheorem> |
+                             <SatisfiableCounterConclusionContradictoryAxioms>
+<Satisfiable>            ::= Satisfiable | <FinitelySatisfiable> |
+                             <SatisfiableAxiomsTheorem> | <ModelExtending> |
+                             <NoConsequence>
+<FinitelySatisfiable>    ::= FinitelySatisfiable | <FiniteTautology>
+<Theorem>                ::= Theorem | <SatisfiableAxiomsTheorem> |
+                             <ContradictoryAxioms>
+<FiniteTheorem>          ::= FiniteTheorem | <Theorem> | <FiniteTautology>
+<SatisfiableAxiomsTheorem> ::= SatisfiableAxiomsTheorem | <Equivalent> |
+                             <TautologousConclusion> | <WeakerConclusion>
+<Equivalent>             ::= Equivalent | <EquivalentTheorem> | <Tautology>
+<TautologousConclusion>  ::= TautologousConclusion | <Tautology> |
+                             <WeakerTautologousConclusion>
+<WeakerConclusion>       ::= WeakerConclusion | <WeakerTautologousConclusion> |
+                             <WeakerTheorem>
+<EquivalentTheorem>      ::= EquivalentTheorem
+<Tautology>              ::= Tautology
+<FiniteTautology>        ::= FiniteTautology | <Tautology>
+<WeakerTautologousConclusion> ::= WeakerTautologousConclusion
+<WeakerTheorem>          ::= WeakerTheorem
+<ModelExtending>         ::= ModelExtending | <Equivalent>
+<NoConsequence>          ::= NoConsequence
+<ContradictoryAxioms>    ::= ContradictoryAxioms |
+                             <SatisfiableConclusionContradictoryAxioms> |
+                             <SatisfiableCounterConclusionContradictoryAxioms>
+<SatisfiableConclusionContradictoryAxioms> ::= SatisfiableConclusionContradictoryAxioms |
+                             <TautologousConclusionContradictoryAxioms> |
+                             <WeakerConclusionContradictoryAxioms>
+<TautologousConclusionContradictoryAxioms> ::= TautologousConclusionContradictoryAxioms
+<WeakerConclusionContradictoryAxioms> ::= WeakerConclusionContradictoryAxioms
+<CounterUnsatisfiabilityPreserving> ::= CounterUnsatisfiabilityPreserving |
+                             <Satisfiable> | <EquiCounterSatisfiable>
+<CounterSatisfiabilityPreserving> ::= CounterSatisfiabilityPreserving |
+                             <EquiCounterSatisfiable> | <CounterTheorem>
+<CounterTautologyPreserving> ::= CounterTautologyPreserving |
+                             <EquiCounterTautologous> | <CounterTheorem>
+<EquiCounterSatisfiable> ::= EquiCounterSatisfiable | <EquivalentTheorem> |
+                             <WeakerTheorem> |
+                             <TautologousConclusionContradictoryAxioms> |
+                             <CounterSatisfiable>
+<EquiCounterTautologous> ::= EquiCounterTautologous | <WeakerConclusion> |
+                             <EquivalentTheorem> |
+                             <SatisfiableConclusionContradictoryAxioms> |
+                             <CounterEquivalent> | <WeakerCounterTheorem>
+<CounterSatisfiable>     ::= CounterSatisfiable | <NoConsequence> |
+                             <FinitelyCounterSatisfiable> |
+                             <SatisfiableAxiomsCounterTheorem> |
+                             <CounterModelExtending>
+<FinitelyCounterSatisfiable> ::= FinitelyCounterSatisfiable |
+                             <FinitelyUnsatisfiable>
+<CounterTheorem>         ::= CounterTheorem | <ContradictoryAxioms> |
+                             <SatisfiableAxiomsCounterTheorem>
+<FiniteCounterTheorem>   ::= FiniteCounterTheorem | <CounterTheorem> |
+                             <FinitelyUnsatisfiable>
+<SatisfiableAxiomsCounterTheorem> ::= SatisfiableAxiomsCounterTheorem |
+                             <CounterEquivalent> | <UnsatisfiableConclusion> |
+                             <WeakerCounterConclusion>
+<CounterEquivalent>      ::= CounterEquivalent | <EquivalentCounterTheorem> |
+                             <Unsatisfiable>
+<UnsatisfiableConclusion> ::= UnsatisfiableConclusion | <Unsatisfiable> |
+                             <WeakerUnsatisfiableConclusion>
+<WeakerCounterConclusion> ::= WeakerCounterConclusion |
+                             <WeakerUnsatisfiableConclusion> |
+                             <WeakerCounterTheorem>
+<EquivalentCounterTheorem> ::= EquivalentCounterTheorem
+<Unsatisfiable>          ::= Unsatisfiable
+<FinitelyUnsatisfiable>  ::= FinitelyUnsatisfiable | <Unsatisfiable>
+<WeakerUnsatisfiableConclusion> ::= WeakerUnsatisfiableConclusion
+<WeakerCounterTheorem>   ::= WeakerCounterTheorem
+<CounterModelExtending>  ::= CounterModelExtending | <CounterEquivalent>
+<SatisfiableCounterConclusionContradictoryAxioms> ::= SatisfiableCounterConclusionContradictoryAxioms |
+                             <WeakerConclusionContradictoryAxioms> |
+                             <UnsatisfiableConclusionContradictoryAxioms>
+<UnsatisfiableConclusionContradictoryAxioms> ::= UnsatisfiableConclusionContradictoryAxioms
+<TypeCheckSuccess>       ::= TypeCheckSuccess | <TypeCheckPartial>
+<TypeCheckPartial>       ::= TypeCheckPartial | <TypeCheckedComplete>
+<TypeCheckedComplete>    ::= TypeCheckedComplete
+<VerifySuccess>          ::= VerifySuccess | <VerifiedGood> | <VerifiedBad>
+<VerifiedGood>           ::= VerifiedGood
+<VerifiedBad>            ::= VerifiedBad
+
+%----The no-success ontology
+<NoSuccess>              ::= NoSuccess | <Open> | <NotVerified> | <Assumed> |
+                             <Unknown> | <Incorrect>
+<Unknown>                ::= Unknown | <Stopped> | <InProgress> | <NotTried>
+<Stopped>                ::= Stopped | <Forced> | <GaveUp>
+<InProgress>             ::= InProgress
+<NotTried>               ::= NotTried | <NotTriedYet> | <Inappropriate>
+<NotTriedYet>            ::= NotTriedYet
+<Error>                  ::= Error | <InputError> | <OSError>
+<Forced>                 ::= Forced | <User> | <ResourceOut>
+<GaveUp>                 ::= GaveUp | <ResourceOut> | <Incomplete> | <Error> |
+                             <Inappropriate>
+<OSError>                ::= OSError
+<InputError>             ::= InputError | <SyntaxError> | <SemanticError> |
+                             <UsageError>
+<SyntaxError>            ::= SyntaxError
+<SemanticError>          ::= SemanticError | <TypeError> | <Unsemantic>
+<TypeError>              ::= TypeError
+<Unsemantic>             ::= Unsemantic
+<UsageError>             ::= UsageError
+<User>                   ::= User
+<ResourceOut>            ::= ResourceOut | <Timeout> | <MemoryOut>
+<Timeout>                ::= Timeout | <CPUTimeout> | <WCTimeout>
+<CPUTimeout>             ::= CPUTimeout
+<WCTimeout>              ::= WCTimeout
+<MemoryOut>              ::= MemoryOut
+<Incomplete>             ::= Incomplete
+<Inappropriate>          ::= Inappropriate
+<Incorrect>              ::= Incorrect
+<Assumed>                ::= Assumed(<Unknown>,<Success>)
+<Open>                   ::= Open
+<NotVerified>            ::= NotVerified | <FailedVerified>
+<FailedVerified>         ::= FailedVerified
+
+%----The dataform ontology, as used in a % SZS output line
+<Data>                   ::= Data | <None> | <LogicalData> | <NonLogicalData>
+<LogicalData>            ::= LogicalData | <NotASolution> | <Solution>
+<NonLogicalData>         ::= NonLogicalData | <Comment> | <FreeText>
+<NotASolution>           ::= NotASolution | <Assurance> | <IncompleteProof> |
+                             <IncompleteInterpretation>
+<Solution>               ::= Solution | <Proof> | <Interpretation> |
+                             <ListOfFormulae>
+<Assurance>              ::= Assurance
+<IncompleteProof>        ::= IncompleteProof
+<IncompleteInterpretation> ::= IncompleteInterpretation
+<Proof>                  ::= Proof | <Refutation> | <Derivation>
+<Interpretation>         ::= Interpretation | <Model> |
+                             <DomainInterpretation> |
+                             <HerbrandInterpretation>
+<ListOfFormulae>         ::= ListOfFormulae | <HerbrandInterpretation>
+<Refutation>             ::= Refutation | <CNFRefutation>
+<Derivation>             ::= Derivation
+<CNFRefutation>          ::= CNFRefutation
+<Model>                  ::= Model | <DomainModel> | <HerbrandModel>
+<DomainInterpretation>   ::= DomainInterpretation | <DomainModel> |
+                             <FiniteInterpretation> |
+                             <InfiniteInterpretation>
+<DomainModel>            ::= DomainModel | <FiniteModel> | <InfiniteModel>
+<FiniteInterpretation>   ::= FiniteInterpretation | <FiniteModel>
+<FiniteModel>            ::= FiniteModel
+<InfiniteInterpretation> ::= InfiniteInterpretation | <InfiniteModel>
+<InfiniteModel>          ::= InfiniteModel
+<HerbrandInterpretation> ::= HerbrandInterpretation | <HerbrandModel> |
+                             <FormulaHerbrandInterpretation>
+<HerbrandModel>          ::= HerbrandModel | <FormulaHerbrandModel>
+<FormulaHerbrandInterpretation> ::= FormulaHerbrandInterpretation |
+                             <FormulaHerbrandModel>
+<FormulaHerbrandModel>   ::= FormulaHerbrandModel | <Saturation>
+<Saturation>             ::= Saturation
+<Comment>                ::= Comment
+<FreeText>               ::= FreeText | <Verification>
+<Verification>           ::= Verification
+<None>                   ::= None
+
+%----A success ontology value inside a TPTP inference record
+<inference_status_value> ::= suc | ssu | unp | sap | tap | esa | eta | sat |
+                             fsa | thm | fth | sth | eqv | tac | wec | eth |
+                             tau | ftt | wtc | wth | mex | noc | cax | sca |
+                             tca | wca | cup | csp | ctp | ecs | eca | csa |
+                             fcs | cth | fct | sct | ceq | unc | wcc | ect |
+                             uns | fun | wuc | wct | cmx | scc | uca
+------------------------------------------------------------------------------
