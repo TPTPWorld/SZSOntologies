@@ -1,0 +1,15 @@
+(*  Title:      ROOT
+    Author:     Johannes Schuster
+    Copyright:  2026 Geoff Sutcliffe and Johannes Schuster
+    License:    BSD-3-Clause
+*)
+
+session SZS = HOL +
+  options [document = false]
+  theories
+    SZS_Status
+    SZS_Semantics
+    SZS_Shapes
+    SZS_Hierarchy
+    SZS_BNF
+    SZS_BNF_Check

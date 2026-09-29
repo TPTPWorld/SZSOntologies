@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  # SZS_BNF_Check.thy reads BNF/SZSOntology.bnf and proves, by evaluation,
+  # that its success part is the grammar derived from the definitions and
+  # that the other two ontologies are well formed.  An edit to the BNF that
+  # the formalisation does not account for fails this job.
+  verify:
+    name: Isabelle verifies the BNF
+    runs-on: ubuntu-latest
+    # The image is built from ./Containerfile and pushed once per Isabelle
+    # version (GitHub Actions cannot reach the TUM download host reliably):
+    #   podman build -t szs-isabelle -f Containerfile .
+    #   podman tag szs-isabelle ghcr.io/jcschuster/szs-isabelle:Isabelle2025-2
+    #   podman push ghcr.io/jcschuster/szs-isabelle:Isabelle2025-2
+    # The package must be public (GitHub -> Packages -> szs-isabelle ->
+    # Package settings -> Change visibility), or this job needs credentials.
+    container:
+      image: ghcr.io/jcschuster/szs-isabelle:Isabelle2025-2
+      # actions/checkout needs to write to the workspace, which the image's
+      # default user (isabelle) may not; the HOL heap is a system heap and
+      # USER_HOME is world-writable, so root works.
+      options: --user root
+    steps:
+      - name: Install git for checkout and dirty-worktree check
+        run: |
+          if ! command -v git >/dev/null 2>&1; then
+            apt-get update
+            apt-get install -y --no-install-recommends git
+          fi
+
+      - uses: actions/checkout@v4
+
+      - name: Build session SZS
+        run: /home/isabelle/Isabelle/bin/isabelle build -v -D IsabelleFormalisation
+
+      - name: The build did not touch the repository
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git diff --exit-code
+
+  # The hyperlinked page is BNFLinker.sedscript applied to the BNF, as on
+  # tptp.org.  It is built from the checked-out BNF and published to GitHub
+  # Pages, together with the raw .bnf, once the verification has passed on
+  # master.  One-off repository setting: Settings -> Pages -> Source: GitHub Actions.
+  pages:
+    name: Publish to GitHub Pages
+    needs: verify
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Link the BNF
+        run: |
+          mkdir -p _site
+          sed -f BNF/BNFLinker.sedscript BNF/SZSOntology.bnf > _site/SZSOntology.html
+          cp _site/SZSOntology.html _site/index.html
+          cp BNF/SZSOntology.bnf _site/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

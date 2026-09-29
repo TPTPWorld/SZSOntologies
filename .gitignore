@@ -1,0 +1,4 @@
+# local copy of the Isabelle distribution for the container build
+Isabelle.tar.gz
+# isabelle export output
+export/
