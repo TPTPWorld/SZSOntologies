@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
-%----The SZS ontologies, generated from SZS_BNF.thy
+%----The SZS ontologies, generated from SZS_BNF.thy. Change so I get a push.
 
 %----A status value, as used in a % SZS status line
 <SZS>                    ::= <Success> | <NoSuccess> | <Data>
