@@ -2,3 +2,4 @@
 Isabelle.tar.gz
 # isabelle export output
 export/
+.DS_Store
