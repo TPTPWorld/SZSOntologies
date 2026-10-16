@@ -1,0 +1,121 @@
+FROM docker.io/library/elixir:1.20-otp-29
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl git jq less unzip zsh sudo procps \
+    ripgrep fd-find fzf gh inotify-tools \
+    libfontconfig1 libgomp1 pwgen rlwrap perl \
+    && ln -s "$(command -v fdfind)" /usr/local/bin/fd \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV COLORTERM=truecolor \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
+    ELIXIR_ERL_OPTIONS="+fnu" \
+    ERL_AFLAGS="+fnu"
+
+RUN useradd -m -s /bin/zsh node \
+    && echo "node ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/node
+
+USER node
+WORKDIR /workspace
+
+ENV MIX_HOME=/home/node/.mix \
+    HEX_HOME=/home/node/.hex \
+    SHELL=/bin/zsh \
+    TPTP=/opt/TPTP \
+    TPTP_ROOT=/opt/TPTP \
+    PATH="/home/node/.local/bin:/home/node/.mix/escripts:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+RUN curl -fsSL https://claude.ai/install.sh | bash \
+    && mix local.hex --force \
+    && mix local.rebar --force \
+    && claude --version
+
+USER root
+
+# ATP_MCP_VERSION pins a Hex release; empty installs the latest.
+ARG ATP_MCP_VERSION=
+RUN MIX_HOME=/opt/mix HEX_HOME=/opt/hex mix local.hex --force \
+    && MIX_HOME=/opt/mix HEX_HOME=/opt/hex \
+    mix escript.install hex atp_mcp ${ATP_MCP_VERSION:+"$ATP_MCP_VERSION"} --force \
+    && ln -s /opt/mix/escripts/atp_mcp /usr/local/bin/atp_mcp \
+    && atp_mcp --version
+
+COPY <<'EOF' /usr/local/bin/claude-env-entrypoint
+#!/bin/bash
+set -euo pipefail
+for snippet in /etc/claude-env/entrypoint.d/*.sh; do
+    [ -e "$snippet" ] || continue
+    # shellcheck disable=SC1090
+    . "$snippet"
+done
+exec "$@"
+EOF
+
+COPY <<'EOF' /etc/claude-env/entrypoint.d/10-atp-mcp.sh
+# Register AtpMcp with Claude Code once per home volume.
+if command -v claude >/dev/null 2>&1 && ! claude mcp get atp >/dev/null 2>&1; then
+    claude mcp add --scope user --transport stdio atp -- atp_mcp >/dev/null
+fi
+# Project configuration, if the project ships one.
+if [ -f /workspace/.claude/atp_mcp.exs ]; then
+    export ATP_MCP_CONFIG=/workspace/.claude/atp_mcp.exs
+fi
+EOF
+
+RUN chmod 755 /usr/local/bin/claude-env-entrypoint
+
+USER node
+ENTRYPOINT ["/usr/local/bin/claude-env-entrypoint"]
+CMD ["/bin/zsh"]
+
+USER root
+
+# E: `./configure --enable-ho` builds the higher-order variant as eprover-ho.
+ARG E_TAG=E-3.5.1
+RUN git clone -q --depth 1 --branch "$E_TAG" https://github.com/eprover/eprover.git /tmp/eprover \
+    && cd /tmp/eprover \
+    && ./configure >/dev/null && make -j"$(nproc)" >/dev/null \
+    && install -m 755 PROVER/eprover /usr/local/bin/eprover \
+    && make clean >/dev/null \
+    && ./configure --enable-ho >/dev/null && make -j"$(nproc)" >/dev/null \
+    && install -m 755 PROVER/eprover-ho /usr/local/bin/eprover-ho \
+    && cd / && rm -rf /tmp/eprover \
+    && eprover --version && eprover-ho --version
+
+# Vampire: release build for Linux x86-64.
+ARG VAMPIRE_VERSION=5.1.0
+ARG VAMPIRE_SHA256=495828dc76cb17a27080d62dedce755e46de96f47f06f5f0ad4be9cdaf6f968f
+RUN curl -fsSL -o /tmp/vampire.zip \
+    "https://github.com/vprover/vampire/releases/download/v${VAMPIRE_VERSION}/vampire-Linux-X64.zip" \
+    && echo "${VAMPIRE_SHA256}  /tmp/vampire.zip" | sha256sum -c - \
+    && unzip -q -o /tmp/vampire.zip vampire -d /usr/local/bin \
+    && chmod 755 /usr/local/bin/vampire \
+    && rm /tmp/vampire.zip \
+    && vampire --version
+
+# Isabelle: the distribution from the official image, HOL heaps prebuilt.
+# Runtime dependencies (libfontconfig1, libgomp1, perl) come with the base.
+COPY --from=docker.io/makarius/isabelle:Isabelle2025-2 /home/isabelle/Isabelle /opt/isabelle
+ENV PATH="/opt/isabelle/bin:${PATH}"
+
+# `eval "$(isabelle-server-env [name])"` — resident Isabelle server for the
+# :isabelle_server tests and anything else that takes host/port/password.
+# `isabelle server -n NAME` starts the server or reports the running one.
+COPY <<'EOF' /usr/local/bin/isabelle-server-env
+#!/bin/bash
+set -euo pipefail
+name="${1:-claude-env}"
+info=$(isabelle server -n "$name")
+# server "NAME" = HOST:PORT (password "PASSWORD")
+if [[ "$info" =~ =\ ([0-9.]+):([0-9]+)\ \(password\ \"([^\"]+)\"\) ]]; then
+    printf 'export ISABELLE_HOST=%q ISABELLE_PORT=%q ISABELLE_PASSWORD=%q\n' \
+        "${BASH_REMATCH[1]}" "${BASH_REMATCH[2]}" "${BASH_REMATCH[3]}"
+else
+    echo "isabelle-server-env: could not parse: $info" >&2
+    exit 1
+fi
+EOF
+RUN chmod 755 /usr/local/bin/isabelle-server-env
+
+USER node

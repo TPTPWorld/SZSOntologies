@@ -1,0 +1,14 @@
+(*  Title:      ROOT
+    Author:     Johannes Schuster and Geoff Sutcliffe
+    Copyright:  2026 Geoff Sutcliffe and Johannes Schuster
+    License:    BSD-3-Clause
+
+Repository-only session: checks BNF/SZSOntology.bnf against the
+formalisation in SZS_Ontologies.  Not part of the AFP entry, which must
+not read files outside its own directory.
+*)
+
+session SZS_Check = SZS_Ontologies +
+  options [document = false]
+  theories
+    SZS_BNF_Check

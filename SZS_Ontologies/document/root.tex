@@ -1,0 +1,46 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage{isabelle,isabellesym}
+\usepackage{amssymb}
+\usepackage{url}
+
+% this should be the last package used
+\usepackage{pdfsetup}
+
+% urls in roman style, theory text in math-similar italics
+\urlstyle{rm}
+\isabellestyle{it}
+
+\begin{document}
+
+\title{The SZS Ontologies}
+\author{Johannes Schuster \and Geoff Sutcliffe}
+\maketitle
+
+\begin{abstract}
+The SZS success ontology~\cite{Sut08,SZS} is formalised: each of its
+forty-five model theoretic values is a condition on the models of an axiom
+set and a conjecture, and the counter values are obtained from the positive
+ones by a mirror theorem.  Entailment between values is decided by reducing
+the two model sets to one of 81 finite shapes; the decision procedure is
+proved sound and complete.  The isa hierarchy is the transitive reduction of
+the entailment order, and the BNF of the success ontology is generated from
+it.  Each edge of the hierarchy is exported as a TPTP problem in TF0 and
+TH0~\cite{TFF0,THF0}, with a proof that the problem states the corresponding
+entailment.
+\end{abstract}
+
+\setcounter{tocdepth}{2}
+\tableofcontents
+
+% sane default for proof documents
+\parindent 0pt\parskip 0.5ex
+
+% generated text of all theories
+\input{session}
+
+% optional bibliography
+\bibliographystyle{abbrv}
+\bibliography{root}
+
+\end{document}
