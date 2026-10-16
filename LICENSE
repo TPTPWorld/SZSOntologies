@@ -2,13 +2,13 @@ This repository is distributed under two licenses.
 
 1. Isabelle theories
 
-   IsabelleFormalisation/*.thy
-   (and any ROOT and document/ files accompanying them)
+   SZS_Ontologies/*.thy and Check/*.thy
+   (and the ROOT, ROOTS and document/ files accompanying them)
 
    Licensed under the BSD 3-Clause License (SPDX: BSD-3-Clause).
    Full text: LICENSES/BSD-3-Clause.txt
 
-   These theories are intended for submission to the Archive of Formal
+   SZS_Ontologies/ is intended for submission to the Archive of Formal
    Proofs, whose default licence is BSD.
 
 2. Everything else

@@ -1,9 +1,10 @@
-# Isabelle toolchain for the SZS session, for podman or docker.
+# Isabelle toolchain for the SZS sessions, for podman or docker.
 #
 #   podman build -t szs-isabelle -f Containerfile .
-#   podman run --rm --userns=keep-id --user "$(id -u):$(id -g)" -v "$PWD:/work:ro,Z" szs-isabelle build -v -D /work/IsabelleFormalisation
+#   podman run --rm --userns=keep-id --user "$(id -u):$(id -g)" -v "$PWD:/work:ro,Z" szs-isabelle build -v -D /work
 #
-# The image has Isabelle and a prebuilt HOL heap; the SZS heap and logs go
+# The image has Isabelle, a prebuilt HOL heap and the LaTeX packages the
+# session document needs (ulem, txfonts); the SZS heaps and logs go
 # to a scratch directory inside the container.  Nothing is written to the
 # mounted repository, which is why it can be mounted read-only.
 # --userns=keep-id together with --user runs Isabelle under your own uid, so
@@ -11,7 +12,7 @@
 # user would otherwise win over keep-id).  Any other
 # Isabelle tool works the same way, e.g.
 #
-#   podman run --rm --userns=keep-id --user "$(id -u):$(id -g)" -v "$PWD:/work:ro,Z" szs-isabelle build_log -H Error -d /work/IsabelleFormalisation SZS
+#   podman run --rm --userns=keep-id --user "$(id -u):$(id -g)" -v "$PWD:/work:ro,Z" szs-isabelle build_log -H Error -d /work SZS_Ontologies
 #
 # Follows Isabelle's own docker_build recipe (src/Pure/Tools/docker_build.scala).
 
@@ -21,7 +22,8 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -y update && \
-    apt-get install -y curl less libfontconfig1 libgomp1 openssh-client perl pwgen rlwrap && \
+    apt-get install -y curl less libfontconfig1 libgomp1 openssh-client perl pwgen rlwrap \
+      texlive-latex-extra texlive-fonts-recommended texlive-luatex fonts-lmodern && \
     apt-get clean
 
 RUN useradd -m isabelle

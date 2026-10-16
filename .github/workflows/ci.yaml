@@ -7,12 +7,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  # SZS_BNF_Check.thy reads BNF/SZSOntology.bnf and proves, by evaluation,
+  # Check/SZS_BNF_Check.thy reads BNF/SZSOntology.bnf and proves, by evaluation,
   # that its success part is the grammar derived from the definitions and
   # that the other two ontologies are well formed.  An edit to the BNF that
-  # the formalisation does not account for fails this job.
+  # the formalisation does not account for fails this job.  The same job
+  # checks that Problems/ is the current export and that the provers agree
+  # with the problems' Status lines.
   verify:
-    name: Isabelle verifies the BNF
+    name: Isabelle verifies the BNF and the problems
     runs-on: ubuntu-latest
     # The image is built from ./Containerfile and pushed once per Isabelle
     # version (GitHub Actions cannot reach the TUM download host reliably):
@@ -37,11 +39,49 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - name: Build session SZS
-        run: /home/isabelle/Isabelle/bin/isabelle build -v -D IsabelleFormalisation
+      - name: Build sessions SZS_Ontologies and SZS_Check
+        run: /home/isabelle/Isabelle/bin/isabelle build -v -o document=pdf -D .
 
       - name: The build did not touch the repository
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git diff --exit-code
+
+      # SZS_Export exports one TF0 and one TH0 problem per derived edge.  The
+      # committed Problems/ must equal the exports of the current theories.
+      - name: Problems/ is current
+        run: |
+          rm -rf Problems
+          /home/isabelle/Isabelle/bin/isabelle export -d . -n -p 1 -O Problems \
+            -x 'SZS_Ontologies.SZS_Export:T*/*' SZS_Ontologies
+          git status --porcelain Problems
+          git diff --exit-code Problems
+          test -z "$(git status --porcelain Problems)"
+
+      # Every problem claims % Status : Theorem.  The provers bundled with
+      # Isabelle must agree: E and Vampire on TF0, Zipperposition and Vampire
+      # on TH0.
+      - name: The provers agree with the Status lines
+        run: |
+          I=/home/isabelle/Isabelle/bin/isabelle
+          E="$($I getenv -b E_HOME)/eprover"
+          V="$($I getenv -b VAMPIRE_HOME)/vampire"
+          Z="$($I getenv -b ZIPPERPOSITION_HOME)/zipperposition"
+          szs() { grep -m1 -o 'SZS status [A-Za-z]*' | sed 's/SZS status //'; }
+          fail=0
+          for f in Problems/TF0/*.p; do
+            want=$(grep -m1 '^% Status' "$f" | sed 's/.*: *//')
+            e=$("$E" --auto --silent --cpu-limit=60 "$f" 2>&1 | szs)
+            v=$("$V" --mode casc -t 60 "$f" 2>&1 | szs)
+            echo "$f E=$e Vampire=$v"
+            [ "$e" = "$want" ] && [ "$v" = "$want" ] || fail=1
+          done
+          for f in Problems/TH0/*.p; do
+            want=$(grep -m1 '^% Status' "$f" | sed 's/.*: *//')
+            z=$("$Z" -o none --timeout 60 "$f" 2>&1 | szs)
+            v=$("$V" --mode casc -t 60 "$f" 2>&1 | szs)
+            echo "$f Zipperposition=$z Vampire=$v"
+            [ "$z" = "$want" ] && [ "$v" = "$want" ] || fail=1
+          done
+          exit $fail
 
   # The hyperlinked page is BNFLinker.sedscript applied to the BNF, as on
   # tptp.org.  It is built from the checked-out BNF and published to GitHub

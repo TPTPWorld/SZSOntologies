@@ -1,0 +1,21 @@
+(*  Title:      ROOT
+    Author:     Johannes Schuster and Geoff Sutcliffe
+    Copyright:  2026 Geoff Sutcliffe and Johannes Schuster
+    License:    BSD-3-Clause
+*)
+
+chapter AFP
+
+session SZS_Ontologies = HOL +
+  options [timeout = 600]
+  theories
+    SZS_Status
+    SZS_Semantics
+    SZS_Shapes
+    SZS_Hierarchy
+    SZS_BNF
+    SZS_TPTP
+    SZS_Export
+  document_files
+    "root.tex"
+    "root.bib"

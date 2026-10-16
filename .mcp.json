@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "atp": {
+      "command": "atp_mcp",
+      "args": [
+        "--config",
+        ".claude/atp_mcp.exs"
+      ]
+    }
+  }
+}

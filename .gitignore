@@ -3,3 +3,5 @@ Isabelle.tar.gz
 # isabelle export output
 export/
 .DS_Store
+# session document from make pdf
+output/
