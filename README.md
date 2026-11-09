@@ -17,9 +17,14 @@ Everything else is derived from it or checked against it:
 - `Problems/` holds one TF0 and one TH0 problem per edge of the derived
   hierarchy, exported by `SZS_Ontologies/SZS_Export.thy`.  Each conjecture
   is proved in Isabelle to state the edge's entailment.
+- `Relations/` holds the five relations between values (`isa`, `nota`,
+  `nevera`, `xora`, `mighta`) on the forty-five model theoretic values, one
+  file each, and `pairs.txt`, which gives every unordered pair its strongest
+  relation.  They are exported by `SZS_Ontologies/SZS_Export.thy` from
+  `SZS_Relations.thy`.
 
 CI builds both sessions on every push and pull request, checks that
-`Problems/` equals the current export, and runs E, Vampire and
+`Problems/` and `Relations/` equal the current exports, and runs E, Vampire and
 Zipperposition on every problem.  An edit to the BNF therefore fails CI
 until the formalisation accounts for it; for a new success value that means
 formalising its definition.
@@ -30,10 +35,11 @@ formalising its definition.
 
 `ROOTS` lists both sessions, `SZS_Ontologies` and `SZS_Check`.  The BNF is
 a declared dependency of `SZS_Check`, so a change to it triggers a rebuild.
-The theories never write into `BNF/` or `Problems/`; the problems are
-session exports, materialised by
+The theories never write into `BNF/`, `Problems/` or `Relations/`; the
+problems and relations are session exports, materialised by
 
     isabelle export -d . -p 1 -O Problems -x 'SZS_Ontologies.SZS_Export:T*/*' SZS_Ontologies
+    isabelle export -d . -p 1 -O . -x 'SZS_Ontologies.SZS_Export:Relations/*' SZS_Ontologies
 
 Without a local Isabelle, `Containerfile` provides the toolchain
 (Isabelle2025-2 with a prebuilt HOL heap):

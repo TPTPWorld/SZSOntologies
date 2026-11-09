@@ -1,0 +1,170 @@
+(*  Title:      SZS_Relations.thy
+    Author:     Johannes Schuster and Geoff Sutcliffe
+    Copyright:  2026 Geoff Sutcliffe and Johannes Schuster
+    License:    BSD-3-Clause
+*)
+
+theory SZS_Relations
+  imports SZS_BNF
+begin
+
+section \<open>Relations\<close>
+
+text \<open>
+  The five relations of SZS\_Semantics, decided by the checks of SZS\_Shapes
+  over the model theoretic values and rendered as text for export.  Pairs are
+  ordered, exclude the diagonal, and are listed in the order of
+  \<open>all_success\<close>.  Every statement is relative to the \<open>szs\<close> locale.
+\<close>
+
+subsection \<open>The relations\<close>
+
+datatype relation = Isa | Nota | Nevera | Xora | Mighta
+
+definition all_relations :: "relation list" where
+  "all_relations = [Isa, Nota, Nevera, Xora, Mighta]"
+
+primrec rel_name :: "relation \<Rightarrow> string" where
+  "rel_name Isa = ''isa''"
+| "rel_name Nota = ''nota''"
+| "rel_name Nevera = ''nevera''"
+| "rel_name Xora = ''xora''"
+| "rel_name Mighta = ''mighta''"
+
+primrec rel_chk :: "relation \<Rightarrow> success \<Rightarrow> success \<Rightarrow> bool" where
+  "rel_chk Isa s t = isa_chk s t"
+| "rel_chk Nota s t = nota_chk s t"
+| "rel_chk Nevera s t = nevera_chk s t"
+| "rel_chk Xora s t = xora_chk s t"
+| "rel_chk Mighta s t = mighta_chk s t"
+
+subsection \<open>Pair lists\<close>
+
+definition ordered_pairs :: "(success \<times> success) list" where
+  "ordered_pairs =
+     filter (\<lambda>(s, t). s \<noteq> t)
+            (List.product model_theoretic_values model_theoretic_values)"
+
+definition rel_pairs :: "relation \<Rightarrow> (success \<times> success) list" where
+  "rel_pairs r = filter (\<lambda>(s, t). rel_chk r s t) ordered_pairs"
+
+lemma length_ordered_pairs: "length ordered_pairs = 1980"
+  by eval
+
+lemma rel_pairs_Isa: "rel_pairs Isa = entails"
+  by eval
+
+lemma rel_pairs_Nota:
+  "rel_pairs Nota = filter (\<lambda>p. p \<notin> set (rel_pairs Isa)) ordered_pairs"
+  by eval
+
+lemma rel_pairs_Mighta:
+  "rel_pairs Mighta = filter (\<lambda>p. p \<notin> set (rel_pairs Nevera)) ordered_pairs"
+  by eval
+
+lemma rel_pairs_Xora_Nevera:
+  "list_all (\<lambda>p. p \<in> set (rel_pairs Nevera)) (rel_pairs Xora)"
+  by eval
+
+subsubsection \<open>Symmetry and mirror closure\<close>
+
+lemma rel_pairs_sym:
+  "list_all (\<lambda>r. list_all (\<lambda>(s, t). (t, s) \<in> set (rel_pairs r)) (rel_pairs r))
+            [Nevera, Xora, Mighta]"
+  by eval
+
+lemma rel_pairs_mirror:
+  "list_all (\<lambda>r. list_all (\<lambda>(s, t). (mirror s, mirror t) \<in> set (rel_pairs r)) (rel_pairs r))
+            all_relations"
+  by eval
+
+subsubsection \<open>Sizes\<close>
+
+lemma length_rel_pairs:
+  "map (\<lambda>r. length (rel_pairs r)) all_relations = [325, 1655, 796, 16, 1184]"
+  by eval
+
+
+subsection \<open>The strongest relation of a pair\<close>
+
+text \<open>
+  Every model theoretic value holds on some realizable shape, so \<open>isa\<close> and
+  \<open>nevera\<close> exclude each other and the cases below are disjoint.
+\<close>
+
+lemma model_theoretic_satisfiable:
+  "list_all (\<lambda>s. mighta_chk s s) model_theoretic_values"
+  by eval
+
+fun pairs_of :: "'a list \<Rightarrow> ('a \<times> 'a) list" where
+  "pairs_of [] = []"
+| "pairs_of (x # xs) = map (Pair x) xs @ pairs_of xs"
+
+definition unordered_pairs :: "(success \<times> success) list" where
+  "unordered_pairs = pairs_of model_theoretic_values"
+
+lemma length_unordered_pairs: "length unordered_pairs = 990"
+  by eval
+
+definition strongest :: "success \<Rightarrow> success \<Rightarrow> relation \<times> success \<times> success" where
+  "strongest s t =
+     (if isa_chk s t then (Isa, s, t)
+      else if isa_chk t s then (Isa, t, s)
+      else if xora_chk s t then (Xora, s, t)
+      else if nevera_chk s t then (Nevera, s, t)
+      else (Mighta, s, t))"
+
+definition classified_pairs :: "(relation \<times> success \<times> success) list" where
+  "classified_pairs = [strongest s t. (s, t) \<leftarrow> unordered_pairs]"
+
+lemma length_classified_pairs:
+  "map (\<lambda>r. length (filter (\<lambda>(r', s, t). r' = r) classified_pairs)) [Isa, Xora, Nevera, Mighta]
+   = [325, 8, 390, 267]"
+  by eval
+
+lemma classified_pairs_Xora:
+  "filter (\<lambda>(r, s, t). r = Xora) classified_pairs =
+     [(Xora, UNP, SCA), (Xora, SAP, UNC), (Xora, SAT, CTH), (Xora, FSA, FCT),
+      (Xora, THM, CSA), (Xora, FTH, FCS), (Xora, TAC, CSP), (Xora, CUP, SCC)]"
+  by eval
+
+lemma strongest_SAT_CSA: "strongest SAT CSA = (Mighta, SAT, CSA)"
+  by eval
+
+
+subsection \<open>Text\<close>
+
+definition pair_line :: "relation \<Rightarrow> success \<Rightarrow> success \<Rightarrow> string" where
+  "pair_line r s t = mnemonic s @ '' '' @ rel_name r @ '' '' @ mnemonic t"
+
+definition rel_header :: "relation \<Rightarrow> string list" where
+  "rel_header r =
+     [''% '' @ rel_name r @ '' on the 45 model theoretic values of the SZS success ontology.'',
+      ''% Generated by SZS_Export of the AFP entry SZS_Ontologies from rel_pairs '' @ rel_name r,
+      ''% of SZS_Relations: the ordered pairs (s, t) with s ~= t and '' @ rel_name r @ ''_chk s t,'',
+      ''% in the order of all_success.  Relative to the szs locale of SZS_Semantics.'']"
+
+definition rel_text :: "relation \<Rightarrow> string" where
+  "rel_text r = unlines (rel_header r @ map (\<lambda>(s, t). pair_line r s t) (rel_pairs r))"
+
+definition pairs_header :: "string list" where
+  "pairs_header =
+     [''% The 990 unordered pairs of model theoretic values of the SZS success ontology,'',
+      ''% each with the strongest relation of SZS_Semantics that holds: isa (in the'',
+      ''% direction given), else xora, else nevera, else mighta.'',
+      ''% Generated by SZS_Export of the AFP entry SZS_Ontologies from classified_pairs'',
+      ''% of SZS_Relations.  Relative to the szs locale of SZS_Semantics.'']"
+
+definition pairs_text :: string where
+  "pairs_text = unlines (pairs_header @ map (\<lambda>(r, s, t). pair_line r s t) classified_pairs)"
+
+definition relation_files :: "(String.literal \<times> String.literal) list" where
+  "relation_files =
+     [(String.implode (''Relations/'' @ rel_name r @ ''.txt''), String.implode (rel_text r)).
+      r \<leftarrow> all_relations]
+     @ [(String.implode ''Relations/pairs.txt'', String.implode pairs_text)]"
+
+lemma length_relation_files: "length relation_files = 6"
+  by eval
+
+end
