@@ -11,8 +11,8 @@ jobs:
   # that its success part is the grammar derived from the definitions and
   # that the other two ontologies are well formed.  An edit to the BNF that
   # the formalisation does not account for fails this job.  The same job
-  # checks that Problems/ is the current export and that the provers agree
-  # with the problems' Status lines.
+  # checks that Problems/ and Relations/ are the current exports and that
+  # the provers agree with the problems' Status lines.
   verify:
     name: Isabelle verifies the BNF and the problems
     runs-on: ubuntu-latest
@@ -45,16 +45,29 @@ jobs:
       - name: The build did not touch the repository
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git diff --exit-code
 
-      # SZS_Export exports one TF0 and one TH0 problem per derived edge.  The
-      # committed Problems/ must equal the exports of the current theories.
-      - name: Problems/ is current
+      - name: Session document
+        run: /home/isabelle/Isabelle/bin/isabelle document -d . -P output SZS_Ontologies
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SZS_Ontologies-document
+          path: output/document.pdf
+          if-no-files-found: error
+
+      # SZS_Export exports one TF0 and one TH0 problem per derived edge, and
+      # the five relations between values with the classified pairs.  The
+      # committed Problems/ and Relations/ must equal the exports of the
+      # current theories.
+      - name: Problems/ and Relations/ are current
         run: |
-          rm -rf Problems
+          rm -rf Problems Relations
           /home/isabelle/Isabelle/bin/isabelle export -d . -n -p 1 -O Problems \
             -x 'SZS_Ontologies.SZS_Export:T*/*' SZS_Ontologies
-          git status --porcelain Problems
-          git diff --exit-code Problems
-          test -z "$(git status --porcelain Problems)"
+          /home/isabelle/Isabelle/bin/isabelle export -d . -n -p 1 -O . \
+            -x 'SZS_Ontologies.SZS_Export:Relations/*' SZS_Ontologies
+          git status --porcelain Problems Relations
+          git diff --exit-code Problems Relations
+          test -z "$(git status --porcelain Problems Relations)"
 
       # Every problem claims % Status : Theorem.  The provers bundled with
       # Isabelle must agree: E and Vampire on TF0, Zipperposition and Vampire
@@ -107,6 +120,14 @@ jobs:
           sed -f BNF/BNFLinker.sedscript BNF/SZSOntology.bnf > _site/SZSOntology.html
           cp _site/SZSOntology.html _site/index.html
           cp BNF/SZSOntology.bnf _site/
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: SZS_Ontologies-document
+          path: _site/document
+
+      - name: Add the session document
+        run: mv _site/document/document.pdf _site/SZS_Ontologies.pdf && rmdir _site/document
 
       - uses: actions/configure-pages@v5
 

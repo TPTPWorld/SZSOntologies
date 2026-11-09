@@ -15,6 +15,7 @@ session SZS_Ontologies = HOL +
     SZS_Hierarchy
     SZS_BNF
     SZS_TPTP
+    SZS_Relations
     SZS_Export
   document_files
     "root.tex"

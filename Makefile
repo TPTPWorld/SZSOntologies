@@ -4,7 +4,7 @@
 ISABELLE ?= /Users/geoff/MyApplications/TPTPWorld/Isabelle2025-2.app/bin/isabelle
 OUT := $(CURDIR)/output
 
-.PHONY: build pdf problems atp clean
+.PHONY: build pdf problems relations atp clean
 
 build:
 	$(ISABELLE) build -D .
@@ -17,6 +17,11 @@ pdf: build
 problems: build
 	rm -rf Problems
 	$(ISABELLE) export -d . -n -p 1 -O Problems -x 'SZS_Ontologies.SZS_Export:T*/*' SZS_Ontologies
+
+# Relations/ is committed; CI fails if it differs from this export.
+relations: build
+	rm -rf Relations
+	$(ISABELLE) export -d . -n -p 1 -O . -x 'SZS_Ontologies.SZS_Export:Relations/*' SZS_Ontologies
 
 # E and Vampire on TF0, Zipperposition and Vampire on TH0, all bundled
 # with Isabelle.  Every verdict must equal the file's "% Status" line.
