@@ -9,6 +9,8 @@ Everything else is derived from it or checked against it:
 - `SZS_Ontologies/` formalises the success ontology and derives its isa
   hierarchy from the definitions.  It is the Archive of Formal Proofs
   entry, and is self-contained: it reads nothing outside its directory.
+  Its rendered version is published at <https://tptpworld.github.io/SZSOntologies/SZS_Ontologies.pdf>
+  (also rebuilt on every push to `master`).
 - `Check/SZS_BNF_Check.thy` reads the BNF when it is processed and proves
   that the BNF's success part is that hierarchy, and that the no-success
   and dataform parts are well formed (one root, acyclic, every referenced
@@ -49,5 +51,5 @@ Without a local Isabelle, `Containerfile` provides the toolchain
 
 ## Licence
 
-The theories in `SZS_Ontologies/` and `Check/` are BSD-3-Clause; everything else is CC BY 4.0.  
+The theories in `SZS_Ontologies/` and `Check/` are BSD-3-Clause; everything else is CC BY 4.0.
 See `LICENSES/`.

@@ -45,6 +45,15 @@ jobs:
       - name: The build did not touch the repository
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE" && git diff --exit-code
 
+      - name: Session document
+        run: /home/isabelle/Isabelle/bin/isabelle document -d . -P output SZS_Ontologies
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SZS_Ontologies-document
+          path: output/document.pdf
+          if-no-files-found: error
+
       # SZS_Export exports one TF0 and one TH0 problem per derived edge, and
       # the five relations between values with the classified pairs.  The
       # committed Problems/ and Relations/ must equal the exports of the
@@ -111,6 +120,14 @@ jobs:
           sed -f BNF/BNFLinker.sedscript BNF/SZSOntology.bnf > _site/SZSOntology.html
           cp _site/SZSOntology.html _site/index.html
           cp BNF/SZSOntology.bnf _site/
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: SZS_Ontologies-document
+          path: _site/document
+
+      - name: Add the session document
+        run: mv _site/document/document.pdf _site/SZS_Ontologies.pdf && rmdir _site/document
 
       - uses: actions/configure-pages@v5
 
