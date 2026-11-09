@@ -53,7 +53,7 @@ primrec holds :: "success \<Rightarrow> 'i set \<Rightarrow> 'i set \<Rightarrow
 | "holds WTC A C = (A \<noteq> {} \<and> A \<noteq> UNIV \<and> C = UNIV)"
 | "holds WTH A C = (A \<noteq> {} \<and> A \<subseteq> C \<and> C \<inter> - A \<noteq> {} \<and> C \<noteq> UNIV)"
 | "holds MEX A C = (A \<noteq> {} \<and> C \<noteq> {} \<and> C \<subseteq> A)"
-| "holds NOC A C = (A \<inter> C \<noteq> {} \<and> A \<inter> - C \<noteq> {})"
+| "holds NOC A C = (A \<noteq> {} \<and> A \<inter> C \<noteq> {} \<and> A \<inter> - C \<noteq> {})"
 | "holds CAX A C = (A = {})"
 | "holds SCA A C = (A = {} \<and> C \<noteq> {})"
 | "holds TCA A C = (A = {} \<and> C = UNIV)"
