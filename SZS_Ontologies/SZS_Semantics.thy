@@ -96,7 +96,8 @@ theorem holds_mirror: "holds (mirror s) A C = holds s A (- C)"
 subsubsection \<open>Redundant conjuncts\<close>
 
 text \<open>
-  Three conditions contain a conjunct implied by the rest.  The short forms
+  SAT, FSA and NOC, and their mirrors, contain a conjunct implied by the
+  rest.  The definitions follow the wording of the SZS page; the short forms
   are proved here.
 \<close>
 

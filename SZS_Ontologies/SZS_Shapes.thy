@@ -18,7 +18,48 @@ text \<open>
   member.  There are 81 shapes, 65 of them realizable, and entailment between
   values is decided over them.  The check \<open>isa_chk\<close> is executable and
   independent of the interpretation type; the locale supplies the bridge to
-  the sets.
+  the sets.  Figure~\ref{fig:shape} shows the four regions and one shape.
+\<close>
+
+text_raw \<open>
+\begin{figure}[htbp]
+\centering
+\begin{tikzpicture}[scale=0.9,
+  region/.style={font=\footnotesize},
+  interp/.style={font=\footnotesize}]
+  \begin{scope}
+    \draw (-2.6,-1.9) rectangle (2.6,1.9);
+    \draw (-0.75,0) circle (1.4);
+    \draw (0.75,0) circle (1.4);
+    \node[region] at (-1.6,1.55) {$A$};
+    \node[region] at (1.6,1.55) {$C$};
+    \node[region] at (0,0) {$AC$};
+    \node[region] at (-1.45,0) {$AnC$};
+    \node[region] at (1.45,0) {$nAC$};
+    \node[region] at (0,-1.65) {$nAnC$};
+  \end{scope}
+  \begin{scope}[xshift=6.6cm]
+    \draw (-2.6,-1.9) rectangle (2.6,1.9);
+    \draw (-0.75,0) circle (1.4);
+    \draw (0.75,0) circle (1.4);
+    \node[region] at (-1.6,1.55) {$A$};
+    \node[region] at (1.6,1.55) {$C$};
+    \fill (0,0.15) circle (2pt);
+    \node[interp,below] at (0,0.05) {FFin};
+    \node[interp] at (-1.45,0) {FEmpty};
+    \draw (1.45,0.15) circle (2pt);
+    \node[interp,below] at (1.45,0.05) {FInf};
+    \fill (0,-1.45) circle (2pt);
+    \node[interp,below] at (0,-1.55) {FFin};
+  \end{scope}
+\end{tikzpicture}
+\caption{Left: the four regions of a pair $A$, $C$ of model sets.  Right:
+  the shape \texttt{mk\_shape FFin FEmpty FInf FFin}; a filled dot marks a
+  region with a finite interpretation, an open dot a nonempty region without
+  one.  On it THM, FTH, STH, WEC, WTH, SAT and FSA hold; EQV does not, since
+  $nAC$ is nonempty, and FTT does not, since $nAnC$ has a finite member.}
+\label{fig:shape}
+\end{figure}
 \<close>
 
 subsection \<open>Regions and shapes\<close>

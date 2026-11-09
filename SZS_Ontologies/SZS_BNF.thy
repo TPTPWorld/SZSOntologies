@@ -13,7 +13,8 @@ section \<open>BNF\<close>
 text \<open>
   The BNF of the three SZS ontologies.  The success ontology comes from
   SZS\_Hierarchy as \<open>bnf_edges\<close>; the no-success and dataform ontologies are
-  transcribed from \url{https://szs.tptp.org}.  Each ontology is checked to
+  transcribed from \url{https://szs.tptp.org/nosuccess} and
+  \url{https://szs.tptp.org/dataform}.  Each ontology is checked to
   have one root, no cycle, every value reachable, no implied edge and distinct
   spellings.  The grammar has one rule per value with children.  It is
   rendered as text and exported from the session; the BNF in the repository
@@ -23,6 +24,10 @@ text \<open>
 subsection \<open>The no-success ontology\<close>
 
 subsubsection \<open>Vocabulary\<close>
+
+text \<open>
+  The values of \url{https://szs.tptp.org/nosuccess}.
+\<close>
 
 datatype nosuccess =
     NOS
@@ -148,8 +153,8 @@ subsection \<open>The dataform ontology\<close>
 subsubsection \<open>Vocabulary\<close>
 
 text \<open>
-  The constructors are the mnemonics.  Interpretation is \<open>Itp\<close>, since \<open>Int\<close> is
-  taken.
+  The values of \url{https://szs.tptp.org/dataform}.  The constructors are
+  the mnemonics.  Interpretation is \<open>Itp\<close>, since \<open>Int\<close> is taken.
 \<close>
 
 datatype dataform =
@@ -682,7 +687,8 @@ subsection \<open>Export\<close>
 
 text \<open>
   The document is exported from the generated SML, where a \<open>String.literal\<close>
-  is a native string.
+  is a native string.  A hyperlinked rendering of the BNF is at
+  \url{https://szs.tptp.org/bnf}.
 \<close>
 
 definition szs_ontology_bnf :: String.literal where
