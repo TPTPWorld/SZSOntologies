@@ -11,17 +11,19 @@ begin
 section \<open>Status values\<close>
 
 text \<open>
-  The values of the SZS success ontology, their OneWord names, their
+  The values of the  SZS  success ontology,  their  OneWord  names used in the
+  \<open>% Status :\<close>  header  field  and  in  \<open>% SZS status\<close>  output  lines,  their
   mnemonics, the lower case form used in a TPTP \<open>status(...)\<close> annotation, and
   the mirror involution.  The type is \<open>success\<close>; the no-success and dataform
-  ontologies are separate types in SZS\_BNF.
+  ontologies are separate types in SZS\_BNF.  The ontologies are published at
+  \url{https://szs.tptp.org}.
 \<close>
 
 subsection \<open>The success ontology vocabulary\<close>
 
 text \<open>
-  Fifty-three values.  The counter values are listed in the order induced by
-  \<open>mirror\<close> on the positive values.
+  Fifty-three values, as at \url{https://szs.tptp.org/success}.  The counter
+  values are listed in the order induced by \<open>mirror\<close> on the positive values.
 \<close>
 
 datatype success =
@@ -72,6 +74,11 @@ lemma card_success: "card (UNIV :: success set) = 53"
 subsection \<open>Spellings\<close>
 
 subsubsection \<open>OneWord names\<close>
+
+text \<open>
+  The OneWord is the form used in the \<open>% Status :\<close> header field of TPTP problems
+  and in \<open>% SZS status\<close> lines.
+\<close>
 
 primrec one_word :: "success \<Rightarrow> string" where
   "one_word SUC = ''Success''"
@@ -194,9 +201,10 @@ primrec %invisible mnemonic :: "success \<Rightarrow> string" where
 subsubsection \<open>The status(...) form\<close>
 
 text \<open>
-  In a TPTP inference record a value is written as its lower case mnemonic.
-  Lower casing is injective on the success ontology and not on the union of
-  the three ontologies, where SAT is Satisfiable and Sat is Saturation.
+  In a problem header the OneWord is used; in a TPTP inference record a value
+  is written as its lower case mnemonic.  Lower casing is injective on the
+  success ontology and not on the union of the three ontologies, where SAT is
+  Satisfiable and Sat is Saturation.
 \<close>
 
 definition lower :: "char \<Rightarrow> char" where
@@ -208,11 +216,6 @@ definition status_value :: "success \<Rightarrow> string" where
   "status_value s = map lower (mnemonic s)"
 
 subsubsection \<open>Injectivity\<close>
-
-text \<open>
-  Until 2026 the dataform ontology gave IIn as the mnemonic of both
-  InfiniteInterpretation and IncompleteInterpretation.
-\<close>
 
 lemma distinct_one_words: "distinct (map one_word all_success)"
   by eval
