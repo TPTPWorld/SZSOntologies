@@ -1,7 +1,7 @@
 # Targets for the SZS_Ontologies repository.  Needs isabelle on PATH; pdf
 # also needs pdflatex with ulem and txfonts.
 
-ISABELLE ?= isabelle
+ISABELLE ?= /Users/geoff/MyApplications/TPTPWorld/Isabelle2025-2.app/bin/isabelle
 OUT := $(CURDIR)/output
 
 .PHONY: build pdf problems atp clean
