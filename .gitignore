@@ -3,6 +3,8 @@ Isabelle.tar.gz
 # isabelle export output
 export/
 .DS_Store
+# isabelle autosaves
+*.thy~
 # session document from make pdf
 output/
 .claude/

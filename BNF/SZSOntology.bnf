@@ -1,5 +1,5 @@
-------------------------------------------------------------------------------
-%----The SZS ontologies, generated from SZS_BNF.thy.
+%------------------------------------------------------------------------------
+%----The SZS ontologies, generated from SZS_BNF.thy
 
 %----A status value, as used in a % SZS status line
 <SZS>                    ::= <Success> | <NoSuccess> | <Data>
@@ -129,11 +129,13 @@
 <Unsemantic>             ::= Unsemantic
 <UsageError>             ::= UsageError
 <User>                   ::= User
-<ResourceOut>            ::= ResourceOut | <Timeout> | <MemoryOut>
+<ResourceOut>            ::= ResourceOut | <Timeout> | <MemoryOut> |
+                             <InstructionsOut>
 <Timeout>                ::= Timeout | <CPUTimeout> | <WCTimeout>
 <CPUTimeout>             ::= CPUTimeout
 <WCTimeout>              ::= WCTimeout
 <MemoryOut>              ::= MemoryOut
+<InstructionsOut>        ::= InstructionsOut
 <Incomplete>             ::= Incomplete
 <Inappropriate>          ::= Inappropriate
 <Incorrect>              ::= Incorrect
@@ -189,4 +191,4 @@
                              tca | wca | cup | csp | ctp | ecs | eca | csa |
                              fcs | cth | fct | sct | ceq | unc | wcc | ect |
                              uns | fun | wuc | wct | cmx | scc | uca
-------------------------------------------------------------------------------
+%------------------------------------------------------------------------------

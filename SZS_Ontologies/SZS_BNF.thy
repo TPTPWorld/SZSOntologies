@@ -34,7 +34,7 @@ datatype nosuccess =
   | UNK | STP | INP | NTT | NTY
   | ERR | FOR | GUP
   | OSE | INE | SYE | SEE | TYE | USM | USE
-  | USR | RSO | TMO | CTO | WTO | MMO
+  | USR | RSO | TMO | CTO | WTO | MMO | INO
   | INC | IAP | ICT
   | ASS | OPN | NVE | FVE
 
@@ -44,7 +44,7 @@ definition all_nosuccess :: "nosuccess list" where
      UNK, STP, INP, NTT, NTY,
      ERR, FOR, GUP,
      OSE, INE, SYE, SEE, TYE, USM, USE,
-     USR, RSO, TMO, CTO, WTO, MMO,
+     USR, RSO, TMO, CTO, WTO, MMO, INO,
      INC, IAP, ICT,
      ASS, OPN, NVE, FVE]"
 
@@ -58,7 +58,7 @@ qed
 lemma distinct_all_nosuccess: "distinct all_nosuccess"
   by eval
 
-lemma length_all_nosuccess: "length all_nosuccess = 29"
+lemma length_all_nosuccess: "length all_nosuccess = 30"
   by (simp add: all_nosuccess_def)
 
 primrec ns_one_word :: "nosuccess \<Rightarrow> string" where
@@ -84,6 +84,7 @@ primrec ns_one_word :: "nosuccess \<Rightarrow> string" where
 | "ns_one_word CTO = ''CPUTimeout''"
 | "ns_one_word WTO = ''WCTimeout''"
 | "ns_one_word MMO = ''MemoryOut''"
+| "ns_one_word INO = ''InstructionsOut''"
 | "ns_one_word INC = ''Incomplete''"
 | "ns_one_word IAP = ''Inappropriate''"
 | "ns_one_word ICT = ''Incorrect''"
@@ -115,6 +116,7 @@ primrec %invisible ns_mnemonic :: "nosuccess \<Rightarrow> string" where
 | "ns_mnemonic CTO = ''CTO''"
 | "ns_mnemonic WTO = ''WTO''"
 | "ns_mnemonic MMO = ''MMO''"
+| "ns_mnemonic INO = ''INO''"
 | "ns_mnemonic INC = ''INC''"
 | "ns_mnemonic IAP = ''IAP''"
 | "ns_mnemonic ICT = ''ICT''"
@@ -140,11 +142,11 @@ definition nosuccess_isa :: "(nosuccess \<times> nosuccess) list" where
      (SYE, INE), (SEE, INE), (USE, INE),
      (TYE, SEE), (USM, SEE),
      (USR, FOR), (RSO, FOR),
-     (TMO, RSO), (MMO, RSO),
+     (TMO, RSO), (MMO, RSO), (INO, RSO),
      (CTO, TMO), (WTO, TMO),
      (RSO, GUP), (INC, GUP), (ERR, GUP), (IAP, GUP)]"
 
-lemma length_nosuccess_isa: "length nosuccess_isa = 30"
+lemma length_nosuccess_isa: "length nosuccess_isa = 31"
   by (simp add: nosuccess_isa_def)
 
 
@@ -368,7 +370,7 @@ lemma implied_bnf_edges: "implied bnf_edges = []"
 
 subsubsection \<open>The no-success ontology\<close>
 
-lemma nodes_nosuccess_isa: "length (nodes nosuccess_isa) = 29"
+lemma nodes_nosuccess_isa: "length (nodes nosuccess_isa) = 30"
   by eval
 
 lemma nodes_nosuccess_complete:
@@ -417,7 +419,7 @@ definition all_mnemonics :: "string list" where
      map mnemonic all_success @ map ns_mnemonic all_nosuccess @
      map df_mnemonic all_dataform"
 
-lemma length_all_one_words: "length all_one_words = 112"
+lemma length_all_one_words: "length all_one_words = 113"
   by eval
 
 lemma distinct_all_one_words: "distinct all_one_words"
@@ -481,7 +483,7 @@ definition comment :: "string \<Rightarrow> string list" where
   "comment s = [''%----'' @ s]"
 
 definition banner :: "string list" where
-  "banner = [replicate 78 (CHR 0x2D)]"
+  "banner = [''%'' @ replicate 78 (CHR 0x2D)]"
 
 
 subsection \<open>The grammar\<close>
@@ -549,7 +551,7 @@ definition unknown_values :: "nosuccess list" where
   "unknown_values =
      filter (\<lambda>s. s = UNK \<or> s \<in> set (descendants nosuccess_isa UNK)) all_nosuccess"
 
-lemma length_unknown_values: "length unknown_values = 23"
+lemma length_unknown_values: "length unknown_values = 24"
   by eval
 
 lemma ASS_not_unknown: "ASS \<notin> set unknown_values"
@@ -603,13 +605,13 @@ definition terminal_discipline ::
 lemma distinct_rule_names: "distinct (map fst all_rules)"
   by eval
 
-lemma count_all_rules: "length all_rules = 114"
+lemma count_all_rules: "length all_rules = 115"
   by eval
 
 lemma count_success_rules: "length success_rules = 53"
   by eval
 
-lemma count_nosuccess_rules: "length nosuccess_rules = 29"
+lemma count_nosuccess_rules: "length nosuccess_rules = 30"
   by eval
 
 lemma count_dataform_rules: "length dataform_rules = 30"
@@ -666,7 +668,7 @@ definition ambiguous_dataform :: "dataform list" where
 lemma length_ambiguous_success: "length ambiguous_success = 35"
   by eval
 
-lemma length_ambiguous_nosuccess: "length ambiguous_nosuccess = 6"
+lemma length_ambiguous_nosuccess: "length ambiguous_nosuccess = 7"
   by eval
 
 lemma length_ambiguous_dataform: "length ambiguous_dataform = 8"
