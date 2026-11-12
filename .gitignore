@@ -6,3 +6,5 @@ export/
 # session document from make pdf
 output/
 .claude/
+# drawio
+Pictures/*.drawio.bkp
